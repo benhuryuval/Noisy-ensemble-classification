@@ -1,0 +1,1 @@
+Database,Time,SNR,Number of classifiers,Power limit,Lower bound (mismatch probability),Upper bound (mismatch probability),Mismatch probability (trivial),Error probability (trivial),Mismatch probability (Vanilla GD),Error probability (Vanilla GD),Mismatch probability (Optimized GD),Error probability (Optimized GD),Mismatch probability (BFGS),Error probability (BFGS)
