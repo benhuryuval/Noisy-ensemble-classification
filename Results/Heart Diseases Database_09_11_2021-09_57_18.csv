@@ -1,3 +1,0 @@
-Database,Time,SNR,Number of classifiers,Power limit,Lower bound (mismatch probability),Upper bound (mismatch probability),Mismatch probability (trivial),Error probability (trivial),Mismatch probability (alpha),Error probability (alpha),Mismatch probability (alpha_beta),Error probability (alpha_beta)
-Heart Diseases Database,09_11_2021-09_57_40,-10.0,30,1,6.440792954066472,47.439068825200174,36.93333333333333,40.13333333333333,28.433333333333334,32.166666666666664,37.36666666666667,40.63333333333333
-Heart Diseases Database,09_11_2021-09_58_05,-6.0,30,1,0.6551297598834758,46.012369311930655,29.166666666666664,35.766666666666666,21.9,27.23333333333333,30.433333333333334,34.56666666666667

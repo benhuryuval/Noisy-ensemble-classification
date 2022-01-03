@@ -13,7 +13,7 @@ class NoisyPredictor_:
         """predicts the class of the samples using the noisy confidence level, according to the original Real-AdaBoost
         algorithm"""
         noisy_confidence_levels = confidenceLevels + self.noise_matrix
-        soft_prediction = np.sum(noisy_confidence_levels, 0)
+        soft_prediction = np.sum(noisy_confidence_levels, axis=0)
         hard_prediction = (np.sign(soft_prediction + self.tie_breaker) + 1)/2  # outputs 0 or 1
         return hard_prediction
 
@@ -21,7 +21,7 @@ class NoisyPredictor_:
         """predicts the class of the samples using the noisy confidence level, according to the modified Real-AdaBoost
         optimal coefficients"""
         noisy_confidence_levels = confidence_levels + self.noise_matrix
-        soft_decision = alpha.T @ np.diag(beta.reshape((len(beta),))) @ noisy_confidence_levels
+        soft_decision = (beta * confidence_levels + self.noise_matrix).T.dot(alpha).T
         hard_decision = 0.5 * (1 + np.sign(soft_decision + self.tie_breaker))
         return hard_decision
 
@@ -32,27 +32,31 @@ class NoisyPredictor_:
         ones_vec = np.ones([1, numBaseClassifiers])
         denom = np.sum(noiseVars)
         if pNorm == 1:
-            coeff = powerLimit / numBaseClassifiers
+            coeff = 0 %powerLimit / numBaseClassifiers
         if pNorm == 2:
-            coeff = np.sqrt(powerLimit / numBaseClassifiers)
+            coeff = powerLimit**2 / numBaseClassifiers
         UB = 0
         for i in range(N):
             hi = confidenceLevels[:, i]
             hi = hi.reshape(hi.shape[0], -1)  # 1D array to column vector
             Hi = hi @ hi.T
-            UB += QFunc(coeff * np.sqrt(ones_vec @ Hi @ ones_vec.T / denom))
+            UB += QFunc(np.sqrt(coeff * ones_vec @ Hi @ ones_vec.T / denom))
         UB = np.squeeze(UB) / N
         return UB
 
     def lowerBound(self, confidenceLevels, noiseVars, powerLimit, pNorm):
         """calculates a lower bound on the mismatch probability of the noisy predictor"""
         N = np.size(confidenceLevels, 1)
-        coeff = powerLimit.__pow__(pNorm) / noiseVars.min()
+        if pNorm == 1:
+            coeff = 0
+        if pNorm == 2:
+            coeff = powerLimit / noiseVars.min()
+        # coeff = powerLimit.__pow__(pNorm) / noiseVars.min()
         LB = 0
         for i in range(N):
             hi = confidenceLevels[:, i]
             hi = hi.reshape(hi.shape[0], -1)  # 1D array to column vector
-            LB += QFunc(coeff * (hi.T @ hi))
+            LB += QFunc(np.sqrt(coeff * (hi.T @ hi)))
         LB = np.squeeze(LB) / N
         return LB
 

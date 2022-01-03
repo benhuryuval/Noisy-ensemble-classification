@@ -12,8 +12,8 @@ def white_noise(var_m, n_estimators, n_data_samps, seed=None):
     """ Returns n_estimators*n_data_samps matrix, in which every row is an independent identically distributed random
     Gaussian vector with variance var_m[m] """
     noise_matrix = np.zeros([n_estimators, n_data_samps])
-    if seed is not None:
-        np.random.seed(seed)
+    # if seed is not None:
+    #     np.random.seed(seed)
     for m in range(n_estimators):
         noise_matrix[m] = np.random.normal(0, np.sqrt(var_m[m]), n_data_samps)
     return noise_matrix

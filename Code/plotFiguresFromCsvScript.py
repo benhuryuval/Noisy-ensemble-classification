@@ -34,6 +34,22 @@ plt.xlabel("SNR [dB]", fontsize=14)
 plt.ylabel("Mismatch probability bound [%]", fontsize=14)
 plt.grid()
 
+fig = plt.figure()
+plt.plot(HeartP1["SNR"], HeartP1["Mismatch probability (trivial)"], label='Trivial, T=15', color='blue')
+plt.plot(HeartP1["SNR"], HeartP1["Mismatch probability (Optimized GD)"], label='Optimal (GD), T=15')
+plt.plot(HeartP2["SNR"], HeartP2["Mismatch probability (trivial)"], label='Trivial, T=30', linestyle='--')
+plt.plot(HeartP2["SNR"], HeartP2["Mismatch probability (Optimized GD)"], label='Optimal (GD), T=30', linestyle='--')
+plt.plot(HeartP3["SNR"], HeartP3["Mismatch probability (trivial)"], label='Trivial, T=45', linestyle='-.')
+plt.plot(HeartP3["SNR"], HeartP3["Mismatch probability (Optimized GD)"], label='Optimal (GD), T=45', linestyle='-.')
+plt.legend(loc="upper right", fontsize=12)
+# plt.title(str(database) + "\n Number of Estimators:" + str(numBaseClassifiers))
+plt.xlabel("SNR [dB]", fontsize=14)
+plt.ylabel("Mismatch probability [%]", fontsize=14)
+plt.grid()
+
+
+
+###############################################################################
 
 Cancer15 = pd.read_csv(resultsFolderPath + filenameCancer15 + ".csv")
 Cancer30 = pd.read_csv(resultsFolderPath + filenameCancer30 + ".csv")
