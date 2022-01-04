@@ -20,7 +20,7 @@ class CoefficientsOptimizer:
         alpha_sig = np.sqrt(np.power(alpha, 2).T.dot(self.noiseVars))
         return np.mean(QFunc(np.multiply(sign_vec, alpha_h_vec) / alpha_sig))
 
-    def gradient_unconstrained(self, alpha):
+    def gradient_alpha(self, alpha):
         """ This function calculates the gradient of the cost function"""
         n_data_samps = np.size(self.trainConfidenceLevels, 1)
         numBaseClassifiers = np.size(self.trainConfidenceLevels, 0)
@@ -36,54 +36,7 @@ class CoefficientsOptimizer:
                             part))
         return grad
 
-    def gradientDescent_ES_min(self, alpha_0, max_iter, tol, learn_rate, decay_rate,
-                               cost_history_max_size=101, history_ratio_th=0.5):
-        """ This function calculates optimal coefficients with gradient descent method using an early stop criteria and
-        selecting the minimal value reached throughout the iterations """
-        numBaseClassifiers = np.size(self.trainConfidenceLevels, 0)
-        N = np.size(self.trainConfidenceLevels, 1)
-        eps = 1e-8
-        coefficients = alpha_0
-        diff = 0
-        cost_list = np.array([])
-        cost_history = np.array([])
-        history_stuck_th = int((cost_history_max_size - 1) * history_ratio_th)
-        break_counter = 0
-        break_counter_th = 10  # int(max_iter)
-        min_cost_alpha = alpha_0
-        min_cost = self.calc_mismatch_unconstrained(alpha_0)
-        for i in range(int(max_iter)):
-            # calculate grad, update momentum and alpha
-            grad = self.gradient_unconstrained(coefficients)
-            learn_rate_upd = np.divide(np.eye(numBaseClassifiers) * learn_rate,
-                                       np.sqrt(np.diag(np.power(np.squeeze(grad), 2))) + eps)
-            diff = decay_rate * diff - learn_rate_upd.dot(grad)
-            coefficients = coefficients + diff
-            # update cost status and history for early stop
-            current_cost = self.calc_mismatch_unconstrained(coefficients)
-            cost_list = np.append(cost_list, current_cost)
-            cost_history = np.append(cost_history, current_cost)
-            cost_history = cost_history[-cost_history_max_size:]
-            # check if we found the best spot
-            if current_cost <= min_cost:
-                min_cost = current_cost
-                min_cost_alpha = coefficients
-            # update history:
-            recent_cost_history = cost_history[1:]
-            prev_cost_history = cost_history[:-1]
-            # update break counter:
-            if (np.sum(recent_cost_history > prev_cost_history) >= history_stuck_th) or (
-                    len(recent_cost_history) >= history_stuck_th and np.max(recent_cost_history) - np.min(
-                recent_cost_history) < tol):
-                break_counter += 1
-            else:
-                break_counter = np.max([0, break_counter - 1])
-            if break_counter >= break_counter_th:
-                break
-        # return the best alpha so far:
-        return min_cost_alpha, cost_list
-
-    def optimize_unconstrained_coefficients(self, method='BFGS', tol_val=1e-5, max_iter=15000, learn_rate=1e-2,
+    def optimize_coefficients(self, method='BFGS', tol_val=1e-5, max_iter=15000, learn_rate=1e-2,
                     decay_rate=0.9):
         """calculates the optimal unconstrained coefficients (alpha) using a chosen optimization method"""
         n_estimators = len(self.noiseVars)
@@ -96,9 +49,6 @@ class CoefficientsOptimizer:
                                                  method='BFGS', tol=tol_val, options={'maxiter': max_iter})
             optimal_coef = res_struct.x
             cost_list = []
-        elif method == 'GD_ES_min':
-            optimal_coef, cost_list = self.gradientDescent_ES_min(x0, max_iter=max_iter, tol=tol_val,
-                                                                  learn_rate=learn_rate, decay_rate=decay_rate)
         elif method == 'GD':
             cost_list, alpha, stop_iter = self.gradient_descent(x0, max_iter=max_iter, tol=tol_val,
                                                                     learn_rate=learn_rate, decay_rate=decay_rate)
@@ -109,16 +59,16 @@ class CoefficientsOptimizer:
         return optimal_coef, cost_list
 
     ''' - - - Constrained optimization of weights and gains - - - '''
-    def calc_mismatch_constrained(self, a, b):
+    def calc_mismatch_alpha_beta(self, a, b):
         """ This function calculates the cost function of the optimization"""
         h = self.trainConfidenceLevels
         sigma = self.noiseVars
         sqrt_one_h_ht_one = abs(h.sum(axis=0))
         alpha_sigma_alpha = (np.power(a, 2) * sigma).sum()
         g = ((a * b).T @ h) * h.sum(axis=0) / (sqrt_one_h_ht_one * np.sqrt(alpha_sigma_alpha))
-        return np.sum(QFunc(g)) / h.shape[1]
+        return np.mean(QFunc(g))
 
-    def gradient_constrained_alpha_beta(self, a, b):
+    def gradient_alpha_beta_projection(self, a, b):
         """
         Function that computes the gradient of the mismatch probability \tilde{P}_{\alpha,\beta}(x).
         :param a: coefficients column vector \alpha
@@ -141,7 +91,7 @@ class CoefficientsOptimizer:
         # calculate gradient w.r.t beta
         parenthesis_term = (a * h) * h_sum / sqrt_one_h_ht_one / np.sqrt(alpha_sigma_alpha)
         grad_beta = -1/np.sqrt(2*np.pi) * np.sum(np.exp(- 1 / 2 * np.power(g, 2)) * parenthesis_term, axis=1, keepdims=True)
-        # project gradient for beta on feasible domain
+        # get s by projecting gradient for beta on feasible domain
         s = np.zeros([len(grad_beta), 1])
         if grad_beta.__abs__().sum() / b.__abs__().sum() >= 1e-12:  # in case grad_beta is not zero
             if self.pNorm == 1:
@@ -150,8 +100,7 @@ class CoefficientsOptimizer:
                 s = self.powerLimit / np.sqrt(np.power(grad_beta, 2).sum()) * grad_beta
         return grad_alpha, grad_beta, s
 
-    def gradient_descent(self, alpha_0, beta, max_iter=30000, tol=1e-5, learn_rate=0.2, decay_rate=0.2,
-                               cost_history_max_size=101, history_ratio_th=0.5):
+    def gradient_descent(self, alpha_0, beta, max_iter=30000, min_iter=10, tol=1e-5, learn_rate=0.2, decay_rate=0.2):
         """ This function calculates optimal coefficients with gradient descent method using an early stop criteria and
         selecting the minimal value reached throughout the iterations """
         # initializations
@@ -160,59 +109,81 @@ class CoefficientsOptimizer:
         eps = 1e-8  # tolerance value for adagrad learning rate update
         # first iteration
         alpha_evolution[0] = alpha_0
-        cost_evolution[0] = self.calc_mismatch_constrained(alpha_0, beta)
+        cost_evolution[0] = self.calc_mismatch_alpha_beta(alpha_0, beta)
         step = 0  # initialize gradient-descent step to 0
         i = 0  # iteration index in evolution
         # perform gradient-descent
         for i in range(1, max_iter):
             # calculate grad, update momentum and alpha
-            grad = self.gradient_unconstrained(alpha_evolution[i - 1])
+            grad = self.gradient_alpha(alpha_evolution[i - 1])
             # update learning rate and advance according to AdaGrad
             learn_rate_upd = np.divide(np.eye(len(alpha_0)) * learn_rate,
                                        np.sqrt(np.diag(np.power(np.squeeze(grad), 2))) + eps)
             step = decay_rate * step - learn_rate_upd.dot(grad)
             alpha_evolution[i] = alpha_evolution[i-1] + step
             # update cost status and history for early stop
-            cost_evolution[i] = self.calc_mismatch_constrained(alpha_evolution[i], beta)
+            cost_evolution[i] = self.calc_mismatch_alpha_beta(alpha_evolution[i], beta)
             # check convergence
-            if i > 10 and np.abs(cost_evolution[i]-cost_evolution[i-1]) <= tol:
+            if i > min_iter and np.abs(cost_evolution[i]-cost_evolution[i-1]) <= tol:
                 break
         return cost_evolution, alpha_evolution, i
 
-    def frank_wolfe(self, a0, b0, tol=1e-5, K=30000):
+    def frank_wolfe(self, a0, b0, tol=1e-5, K_max=15000, K_min=10):
         # Initialize
-        a, b, rho = [None] * K, [None] * K, [None] * K
-        da, db, cost_function = [None] * K, [None] * K, [None] * K
+        a, b, rho = [None] * K_max, [None] * K_max, [None] * K_max
+        da, db, cost_function = [None] * K_max, [None] * K_max, [None] * K_max
         k = 0
         a[0], b[0] = a0, b0
-        cost_function[0] = self.calc_mismatch_constrained(a[0], b[0])
+        cost_function[0] = self.calc_mismatch_alpha_beta(a[0], b[0])
         # apply the Frank-Wolfe algorithm
-        for k in range(1, K):
-            # optimize alpha for current beta
-            cost_ev, a_ev, stop_iter = self.gradient_descent(a[k - 1], b[k - 1], max_iter=3)
-            a[k] = a_ev[np.argmin(cost_ev[0:stop_iter+1])]
-            # check convergence of cost function
-            cost_function[k] = self.calc_mismatch_constrained(a[k], b[k-1])
-            if k > 10 and abs(cost_function[k]-cost_function[k-1]) <= tol:
-                break
-            # optimize beta for current alpha
-            tmp_da, tmp_db, db[k] = self.gradient_constrained_alpha_beta(a[k], b[k - 1])  # calculate gradient for beta
+        for k in range(1, K_max):
+            # optimize alpha for previous beta
+            cost_ev, a_ev, stop_iter = self.gradient_descent(a[k-1], b[k-1], max_iter=K_min, min_iter=K_min)
+            a_a = a_ev[np.argmin(cost_ev[0:stop_iter])]
+            cost_a = self.calc_mismatch_alpha_beta(a_a, b[k-1])
+            # optimize beta for previous alpha
+            tmp_da, tmp_db, db[k] = self.gradient_alpha_beta_projection(a[k-1], b[k-1])  # calculate projected gradient for beta
             rho[k] = 2 / (2 + k)  # determine momentum/step size for beta
-            b[k] = (1 - rho[k]) * b[k - 1] - rho[k] * db[k]  # advance beta
-        # Return
+            b_b = (1 - rho[k]) * b[k-1] - rho[k] * db[k]  # advance beta
+            cost_b = self.calc_mismatch_alpha_beta(a[k-1], b_b)
+            # optimize alpha for new beta
+            cost_ev, a_ev, stop_iter = self.gradient_descent(a[k-1], b_b, max_iter=K_min, min_iter=K_min)
+            a_ba = a_ev[np.argmin(cost_ev[0:stop_iter])]
+            cost_ba = self.calc_mismatch_alpha_beta(a_ba, b_b)
+            # optimize beta for new alpha
+            tmp_da, tmp_db, db[k] = self.gradient_alpha_beta_projection(a_a, b[k-1])  # calculate projected gradient for beta
+            rho[k] = 2 / (2 + k)  # determine momentum/step size for beta
+            b_ab = (1 - rho[k]) * b[k-1] - rho[k] * db[k]  # advance beta
+            cost_ab = self.calc_mismatch_alpha_beta(a_a, b_ab)
+            # check new cost functions, and update alpha and beta accordingly
+            if   cost_a == np.min([cost_a, cost_b, cost_ba, cost_ab]):
+                cost_function[k], a[k], b[k] = cost_a, a_a, b[k-1]
+            elif cost_b == np.min([cost_a, cost_b, cost_ba, cost_ab]):
+                cost_function[k], a[k], b[k] = cost_a, a[k-1], b_b
+            elif cost_ba == np.min([cost_a, cost_b, cost_ba, cost_ab]):
+                cost_function[k], a[k], b[k] = cost_a, a_ba, b_b
+            elif cost_ab == np.min([cost_a, cost_b, cost_ba, cost_ab]):
+                cost_function[k], a[k], b[k] = cost_a, a_a, b_ab
+            # recheck convergence of cost function
+            if k > K_min and abs(cost_function[k] - cost_function[k-1]) <= tol:
+                break
+        # return
         return cost_function, a, b, k
 
-    def optimize_constrained_coefficients(self, method='Frank-Wolfe', tol=0.0001, max_iter=15000):
+    def optimize_coefficients_power(self, method='Frank-Wolfe', tol=0.0001, max_iter=15000, min_iter=10):
         n_estimators = len(self.noiseVars)
         # initialize coefficients
-        a0 = np.ones([n_estimators, 1])
-        b0 = self.powerLimit * np.ones([n_estimators, 1]) / np.linalg.norm(np.ones([n_estimators, 1]), self.pNorm)
-        # optimize coefficients
-        if method == 'Frank-Wolfe':
-            mismatch_prob, alpha, beta, stop_iter = self.frank_wolfe(a0, b0, tol=tol, K=max_iter)
-        elif method == 'Grad-Alpha':
-            mismatch_prob, alpha, stop_iter = self.gradient_descent(a0, b0, max_iter=max_iter)
-            beta = b0
+        a0 = np.ones([n_estimators, 1])  # initialize uniform aggregation coefficients
+        # optimize coefficients and power allocation
+        if method == 'Alpha-Beta':  # optimize coefficients and power allocation
+            b0 = self.powerLimit * np.ones([n_estimators, 1]) / np.linalg.norm(np.ones([n_estimators, 1]), self.pNorm)  # initialize uniform power subject to constraint
+            mismatch_prob, alpha, beta, stop_iter = self.frank_wolfe(a0, b0, tol=tol, K_max=max_iter, K_min=min_iter)
+        elif method == 'Alpha-UniformBeta':  # optimize coefficients with uniform constrained power allocation
+            beta = self.powerLimit * np.ones([n_estimators, 1]) / np.linalg.norm(np.ones([n_estimators, 1]), self.pNorm)  # initialize uniform power subject to constraint
+            mismatch_prob, alpha, stop_iter = self.gradient_descent(a0, beta, max_iter=max_iter, min_iter=min_iter)
+        elif method == 'Alpha-UnitBeta':  # optimize coefficients with unit power allocation per-channel
+            beta = np.ones([n_estimators, 1])  # initialize unit power per-channel
+            mismatch_prob, alpha, stop_iter = self.gradient_descent(a0, beta, max_iter=max_iter, min_iter=min_iter)
         # return
         return mismatch_prob, alpha, beta, stop_iter
 
