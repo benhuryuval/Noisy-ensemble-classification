@@ -29,3 +29,28 @@ def write_csv_line(line, path_file):
 
 def calc_accuracy(confusion_matrix):
     return confusion_matrix.trace() / confusion_matrix.sum()
+
+def calc_constraint(beta, pNorm):
+    if pNorm == 1:
+        return np.linalg.norm(beta, pNorm)
+    elif pNorm == 2:
+        return np.sum(beta**2)
+    elif pNorm==3:  # infinity norm
+        return np.max(beta)
+
+def calc_uniform(T, G, pNorm):
+    if pNorm == 1:
+        return G/T * np.ones([T,1])
+    elif pNorm == 2:
+        return np.sqrt(G/T) * np.ones([T,1])
+    elif pNorm == 3:  # infinity norm
+        return np.concatenate(([G], np.zeros([T,])))
+
+def scale_to_constraint(beta, G, pNorm):
+    if pNorm == 1:
+        K = np.sum(np.absolute(beta))/G
+    elif pNorm == 2:
+        K = np.sqrt(np.sum(beta**2)/G)
+    elif pNorm == 3:  # infinity norm
+        K = np.max(beta)/G
+    return beta / K

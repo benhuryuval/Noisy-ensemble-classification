@@ -1,225 +1,253 @@
-import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
+from matplotlib.patches import Rectangle
+from matplotlib.legend import Legend
+
+cm = 1/2.54  # centimeters in inches
 
 # load simulation files
-relativeRootPath = "C:\\Users\\Yuval\\Google Drive\\PhD\\Boosting\\Power-constrained weighted combining\\Simulation\\"
-resultsFolderPath = relativeRootPath + "Results\\"
+relativeRootPath = "C:\\Users\\Yuval\\Google Drive\\PhD\\Boosting\\Power-constrained weighted combining\\Noisy-ensemble-classification\\"
+resultsFolderPath = relativeRootPath + "Results\\20_02_2022\\"
 
-# p=1
-filenameHeart15 = "Heart Diseases Database_08_11_2021-08_07_01"
-filenameHeart30 = "Heart Diseases Database_08_11_2021-08_10_40"
-filenameHeart45 = "Heart Diseases Database_08_11_2021-08_14_17"
+# Parkinson
+filenameParkinson_T1_G1 = "Parkinson Database_19_02_2022-22_44_45"
+filenameParkinson_T1_G2 = "Parkinson Database_19_02_2022-23_13_37"
+filenameParkinson_T1_G3 = "Parkinson Database_19_02_2022-23_42_41"
 
-# p=2
-# filenameHeart15 = "Heart Diseases Database_03_11_2021-16_09_11"
-# filenameHeart30 = "Heart Diseases Database_03_11_2021-16_09_20"
-# filenameHeart45 = "Heart Diseases Database_03_11_2021-16_09_28"
+# filenameParkinson_T2_G1 = "Parkinson Database_18_02_2022-23_56_00"
+# filenameParkinson_T2_G2 = "Parkinson Database_19_02_2022-00_54_37"
+# filenameParkinson_T2_G3 = "Parkinson Database_19_02_2022-01_53_22"
+#
+# filenameParkinson_T3_G1 = "Parkinson Database_19_02_2022-02_55_02"
+# filenameParkinson_T3_G2 = "Parkinson Database_19_02_2022-04_03_33"
+# filenameParkinson_T3_G3 = "Parkinson Database_19_02_2022-05_09_28"
 
+# Heart
+# filenameHeart_T1_G1 = "Heart Diseases Database_18_02_2022-21_10_01"
+# filenameHeart_T1_G2 = "Heart Diseases Database_18_02_2022-22_01_25"
+# filenameHeart_T1_G3 = "Heart Diseases Database_18_02_2022-22_48_32"
 
-HeartP1 = pd.read_csv(resultsFolderPath + filenameHeart15 + ".csv")
-HeartP2 = pd.read_csv(resultsFolderPath + filenameHeart30 + ".csv")
-HeartP3 = pd.read_csv(resultsFolderPath + filenameHeart45 + ".csv")
+filenameHeart_T2_G1 = "Heart Diseases Database_20_02_2022-00_11_57"
+filenameHeart_T2_G2 = "Heart Diseases Database_20_02_2022-00_45_32"
+filenameHeart_T2_G3 = "Heart Diseases Database_20_02_2022-01_18_38"
 
-# Figure: lower and upper bounds
-fig = plt.figure()
-plt.plot(HeartP1["SNR"], HeartP1["Upper bound (mismatch probability)"], label='Heart Disease, T=30, Upper bound', linestyle='--', marker='v', color='blue')
-plt.plot(HeartP1["SNR"], HeartP1["Lower bound (mismatch probability)"], label='Heart Disease, T=30, Lower bound', linestyle='--', marker='^', color='blue')
-plt.plot(HeartP2["SNR"], HeartP2["Upper bound (mismatch probability)"], label='Heart Disease, T=30, Upper bound', linestyle='--', marker='v', color='green')
-plt.plot(HeartP2["SNR"], HeartP2["Lower bound (mismatch probability)"], label='Heart Disease, T=30, Lower bound', linestyle='--', marker='^', color='green')
-plt.plot(HeartP3["SNR"], HeartP3["Upper bound (mismatch probability)"], label='Heart Disease, T=30, Upper bound', linestyle='--', marker='v', color='red')
-plt.plot(HeartP3["SNR"], HeartP3["Lower bound (mismatch probability)"], label='Heart Disease, T=30, Lower bound', linestyle='--', marker='^', color='red')
-plt.legend(loc="upper right", fontsize=12)
-plt.xlabel("SNR [dB]", fontsize=14)
-plt.ylabel("Mismatch probability bound [%]", fontsize=14)
-plt.grid()
+# filenameHeart_T3_G1 = "Heart Diseases Database_19_02_2022-02_37_09"
+# filenameHeart_T3_G2 = "Heart Diseases Database_19_02_2022-03_44_42"
+# filenameHeart_T3_G3 = "Heart Diseases Database_19_02_2022-04_52_11"
 
-fig = plt.figure()
-plt.plot(HeartP1["SNR"], HeartP1["Mismatch probability (trivial)"], label='Trivial, T=15', color='blue')
-plt.plot(HeartP1["SNR"], HeartP1["Mismatch probability (Optimized GD)"], label='Optimal (GD), T=15')
-plt.plot(HeartP2["SNR"], HeartP2["Mismatch probability (trivial)"], label='Trivial, T=30', linestyle='--')
-plt.plot(HeartP2["SNR"], HeartP2["Mismatch probability (Optimized GD)"], label='Optimal (GD), T=30', linestyle='--')
-plt.plot(HeartP3["SNR"], HeartP3["Mismatch probability (trivial)"], label='Trivial, T=45', linestyle='-.')
-plt.plot(HeartP3["SNR"], HeartP3["Mismatch probability (Optimized GD)"], label='Optimal (GD), T=45', linestyle='-.')
-plt.legend(loc="upper right", fontsize=12)
-# plt.title(str(database) + "\n Number of Estimators:" + str(numBaseClassifiers))
-plt.xlabel("SNR [dB]", fontsize=14)
-plt.ylabel("Mismatch probability [%]", fontsize=14)
-plt.grid()
+# Cancer
+# filenameCancer_T1_G1 = "Wisconsin Breast Cancer Database_18_02_2022-20_44_35"
+# filenameCancer_T1_G2 = "Wisconsin Breast Cancer Database_18_02_2022-21_35_07"
+# filenameCancer_T1_G3 = "Wisconsin Breast Cancer Database_18_02_2022-22_25_36"
+#
+# filenameCancer_T2_G1 = "Wisconsin Breast Cancer Database_18_02_2022-23_12_34"
+# filenameCancer_T2_G2 = "Wisconsin Breast Cancer Database_19_02_2022-00_08_59"
+# filenameCancer_T2_G3 = "Wisconsin Breast Cancer Database_19_02_2022-01_08_28"
 
+filenameCancer_T3_G1 = "Wisconsin Breast Cancer Database_20_02_2022-01_35_01"
+filenameCancer_T3_G2 = "Wisconsin Breast Cancer Database_20_02_2022-02_13_49"
+filenameCancer_T3_G3 = "Wisconsin Breast Cancer Database_20_02_2022-02_53_51"
 
+# Load files
+# Parkinson
+Parkinson_T1_G1 = pd.read_csv(resultsFolderPath + filenameParkinson_T1_G1 + ".csv")
+Parkinson_T1_G2 = pd.read_csv(resultsFolderPath + filenameParkinson_T1_G2 + ".csv")
+Parkinson_T1_G3 = pd.read_csv(resultsFolderPath + filenameParkinson_T1_G3 + ".csv")
+# Parkinson_T2_G1 = pd.read_csv(resultsFolderPath + filenameParkinson_T2_G1 + ".csv")
+# Parkinson_T2_G2 = pd.read_csv(resultsFolderPath + filenameParkinson_T2_G2 + ".csv")
+# Parkinson_T2_G3 = pd.read_csv(resultsFolderPath + filenameParkinson_T2_G3 + ".csv")
+# Parkinson_T3_G1 = pd.read_csv(resultsFolderPath + filenameParkinson_T3_G1 + ".csv")
+# Parkinson_T3_G2 = pd.read_csv(resultsFolderPath + filenameParkinson_T3_G2 + ".csv")
+# Parkinson_T3_G3 = pd.read_csv(resultsFolderPath + filenameParkinson_T3_G3 + ".csv")
+# Heart
+# Heart_T1_G1 = pd.read_csv(resultsFolderPath + filenameHeart_T1_G1 + ".csv")
+# Heart_T1_G2 = pd.read_csv(resultsFolderPath + filenameHeart_T1_G2 + ".csv")
+# Heart_T1_G3 = pd.read_csv(resultsFolderPath + filenameHeart_T1_G3 + ".csv")
+Heart_T2_G1 = pd.read_csv(resultsFolderPath + filenameHeart_T2_G1 + ".csv")
+Heart_T2_G2 = pd.read_csv(resultsFolderPath + filenameHeart_T2_G2 + ".csv")
+Heart_T2_G3 = pd.read_csv(resultsFolderPath + filenameHeart_T2_G3 + ".csv")
+# Heart_T3_G1 = pd.read_csv(resultsFolderPath + filenameHeart_T3_G1 + ".csv")
+# Heart_T3_G2 = pd.read_csv(resultsFolderPath + filenameHeart_T3_G2 + ".csv")
+# Heart_T3_G3 = pd.read_csv(resultsFolderPath + filenameHeart_T1_G3 + ".csv")
+# Cancer
+# Cancer_T1_G1 = pd.read_csv(resultsFolderPath + filenameCancer_T1_G1 + ".csv")
+# Cancer_T1_G2 = pd.read_csv(resultsFolderPath + filenameCancer_T1_G2 + ".csv")
+# Cancer_T1_G3 = pd.read_csv(resultsFolderPath + filenameCancer_T1_G3 + ".csv")
+# Cancer_T2_G1 = pd.read_csv(resultsFolderPath + filenameCancer_T2_G1 + ".csv")
+# Cancer_T2_G2 = pd.read_csv(resultsFolderPath + filenameCancer_T2_G2 + ".csv")
+# Cancer_T2_G3 = pd.read_csv(resultsFolderPath + filenameCancer_T2_G3 + ".csv")
+Cancer_T3_G1 = pd.read_csv(resultsFolderPath + filenameCancer_T3_G1 + ".csv")
+Cancer_T3_G2 = pd.read_csv(resultsFolderPath + filenameCancer_T3_G2 + ".csv")
+Cancer_T3_G3 = pd.read_csv(resultsFolderPath + filenameCancer_T3_G3 + ".csv")
 
-###############################################################################
+G1_str = "T/100"
+G2_str = "\sqrt{T}"
+G3_str = "T"
+T1, T2, T3 = 30, 45, 60
+G1_1, G2_1, G3_1 = 10*np.log10(T1/100), 10*np.log10(np.sqrt(1)), 10*np.log10(T1)
+G1_2, G2_2, G3_2 = 10*np.log10(T2/100), 10*np.log10(np.sqrt(T2)), 10*np.log10(T2)
+G1_3, G2_3, G3_3 = 10*np.log10(T3/100), 10*np.log10(np.sqrt(T3)), 10*np.log10(T3)
+# G1_1, G2_1, G3_1 = 0, 0, 0  #10*np.log10(np.sqrt(T1)), 10*np.log10(T1/2), 10*np.log10(T1)
+# G1_2, G2_2, G3_2 = 0, 0, 0  #10*np.log10(np.sqrt(T2)), 10*np.log10(T2/2), 10*np.log10(T2)
+# G1_3, G2_3, G3_3 = 0, 0, 0  #10*np.log10(np.sqrt(T3)), 10*np.log10(T3/2), 10*np.log10(T3)
 
-Cancer15 = pd.read_csv(resultsFolderPath + filenameCancer15 + ".csv")
-Cancer30 = pd.read_csv(resultsFolderPath + filenameCancer30 + ".csv")
-Cancer45 = pd.read_csv(resultsFolderPath + filenameCancer45 + ".csv")
-Cancer60 = pd.read_csv(resultsFolderPath + filenameCancer60 + ".csv")
+# fig, axe = plt.subplots(figsize=(8.4, 8.4))
+# plt.plot(Cancer60_G2["SNR"], Cancer60_G2["Error probability (joint: alpha, beta)"], label="Cancer, $G=T$",
+#                 linestyle='--', marker='o', color='green', markersize=6)
+# plt.plot(Cancer60_G3["SNR"], Cancer60_G3["Error probability (joint: alpha, beta)"], label="Cancer, $G=T^2$",
+#                 linestyle='--', marker='o', color='green', markersize=9)
 
-Parkinson15 = pd.read_csv(resultsFolderPath + filenameParkinson15 + ".csv")
-Parkinson30 = pd.read_csv(resultsFolderPath + filenameParkinson30 + ".csv")
-Parkinson45 = pd.read_csv(resultsFolderPath + filenameParkinson45 + ".csv")
-Parkinson60 = pd.read_csv(resultsFolderPath + filenameParkinson60 + ".csv")
+# Figures for JSAC paper
+if True:
+    # Figure: T=30, Parkinson, G=sqrt(T), G=T/2, G=T; T=45, Heart, G=sqrt(T), G=T/2, G=T; T=60, Cancer, G=sqrt(T), G=T/2, G=T
+    with plt.style.context(['science', 'grid']):
+        fig, axe = plt.subplots(figsize=(8.4, 8.4))
+        im1 ,= plt.plot(Parkinson_T1_G1["SNR"], Parkinson_T1_G1["Error probability (joint: alpha, beta)"], label="Parkinson, $G="+G1_str+"$", linestyle=':', marker='o', color='blue', markersize=3)
+        im2 ,= plt.plot(Parkinson_T1_G2["SNR"], Parkinson_T1_G2["Error probability (joint: alpha, beta)"], label="Parkinson, $G="+G2_str+"$", linestyle=':', marker='o', color='blue', markersize=6)
+        im3 ,= plt.plot(Parkinson_T1_G3["SNR"], Parkinson_T1_G3["Error probability (joint: alpha, beta)"], label="Parkinson, $G="+G3_str+"$", linestyle=':', marker='o', color='blue', markersize=9)
+        im4 ,= plt.plot(Heart_T2_G1["SNR"], Heart_T2_G1["Error probability (joint: alpha, beta)"], label="Heart, $G="+G1_str+"$", linestyle='-', marker='o', color='green', markersize=3)
+        im5 ,= plt.plot(Heart_T2_G2["SNR"], Heart_T2_G2["Error probability (joint: alpha, beta)"], label="Heart, $G="+G2_str+"$", linestyle='-', marker='o', color='green', markersize=6)
+        im6 ,= plt.plot(Heart_T2_G3["SNR"], Heart_T2_G3["Error probability (joint: alpha, beta)"], label="Heart, $G="+G3_str+"$", linestyle='-', marker='o', color='green', markersize=9)
+        im7 ,= plt.plot(Cancer_T3_G1["SNR"], Cancer_T3_G1["Error probability (joint: alpha, beta)"], label="Cancer, $G="+G1_str+"$", linestyle='--', marker='o', color='red', markersize=3)
+        im8 ,= plt.plot(Cancer_T3_G2["SNR"], Cancer_T3_G2["Error probability (joint: alpha, beta)"], label="Cancer, $G="+G2_str+"$", linestyle='--', marker='o', color='red', markersize=6)
+        im9 ,= plt.plot(Cancer_T3_G3["SNR"], Cancer_T3_G3["Error probability (joint: alpha, beta)"], label="Cancer, $G="+G3_str+"$", linestyle='--', marker='o', color='red', markersize=9)
 
-# calculate mismatch probability gain
-Heart15Gain = Heart15["Error probability (trivial)"]-Heart15["Error probability (Optimized GD)"]
-Heart30Gain = Heart30["Error probability (trivial)"]-Heart30["Error probability (Optimized GD)"]
-Heart45Gain = Heart45["Error probability (trivial)"]-Heart45["Error probability (Optimized GD)"]
-Heart60Gain = Heart60["Error probability (trivial)"]-Heart60["Error probability (Optimized GD)"]
+        # create blank rectangle
+        extra = Rectangle((0, 0), 1, 1, fc="w", fill=False, edgecolor='none', linewidth=0)
+        # Create organized list containing all handles for table. Extra represent empty space
+        legend_handle = [extra, extra, extra, extra, extra, im1, im2, im3, extra, im4, im5, im6, extra, im7, im8, im9]
+        # Define the labels
+        label_row_1 = ["", r"$G="+G1_str+"$", r"$G="+G2_str+"$", r"$G="+G3_str+"$"]
+        label_j_1 = [r"Parkinson"]
+        label_j_2 = [r"Heart disease"]
+        label_j_3 = [r"Breast cancer"]
+        label_empty = [""]
+        # organize labels for table construction
+        legend_labels = np.concatenate(
+            [label_row_1, label_j_1, label_empty * 3, label_j_2, label_empty * 3, label_j_3, label_empty * 3])
+        # Create legend
+        axe.legend(legend_handle, legend_labels, fontsize=14,
+                  loc='lower left', ncol=4, shadow=False, handletextpad=-2, framealpha=0.8)
 
-Cancer15Gain = Cancer15["Error probability (trivial)"]-Cancer15["Error probability (Optimized GD)"]
-Cancer30Gain = Cancer30["Error probability (trivial)"]-Cancer30["Error probability (Optimized GD)"]
-Cancer45Gain = Cancer45["Error probability (trivial)"]-Cancer45["Error probability (Optimized GD)"]
-Cancer60Gain = Cancer60["Error probability (trivial)"]-Cancer60["Error probability (Optimized GD)"]
+        plt.autoscale(tight=True)
+        plt.xlabel(r'SNR [dB]', fontsize=20)
+        plt.ylabel(r'Error probability [\%]', fontsize=20)
+        plt.xticks(fontsize=20)
+        plt.yticks(fontsize=20)
+        plt.ylim([0,50])
+        plt.xlim([-25, 10])
+        plt.show()
 
-Parkinson15Gain = Parkinson15["Error probability (trivial)"]-Parkinson15["Error probability (Optimized GD)"]
-Parkinson30Gain = Parkinson30["Error probability (trivial)"]-Parkinson30["Error probability (Optimized GD)"]
-Parkinson45Gain = Parkinson45["Error probability (trivial)"]-Parkinson45["Error probability (Optimized GD)"]
-Parkinson60Gain = Parkinson60["Error probability (trivial)"]-Parkinson60["Error probability (Optimized GD)"]
+    # fig.savefig('error_prob.png', format='png', dpi=300)
+    fig.savefig('error_prob_a_g.pdf', format='pdf')
 
-# Figure: Heart, T=45; Parkinson, T=30; Cancer, T=60
-fig = plt.figure()
-plt.plot(Parkinson30["SNR"], Parkinson30["Error probability (trivial)"], label='Parkinson, T=30, Trivial', marker='v', color='blue')
-plt.plot(Parkinson30["SNR"], Parkinson30["Error probability (Optimized GD)"], label='Parkinson, T=30, Optimal (GD)', marker='^', color='blue')
-plt.plot(Heart45["SNR"], Heart45["Error probability (trivial)"], label='Heart Disease, T=45, Trivial', linestyle='--', marker='v', color='green')
-plt.plot(Heart45["SNR"], Heart45["Error probability (Optimized GD)"], label='Heart Disease, T=45, Optimal (GD)', linestyle='--', marker='^', color='green')
-plt.plot(Cancer60["SNR"], Cancer60["Error probability (trivial)"], label='Breast cancer, T=60, Trivial', linestyle=':', marker='v', color='red')
-plt.plot(Cancer60["SNR"], Cancer60["Error probability (Optimized GD)"], label='Breast cancer, T=60, Optimal (GD)', linestyle=':', marker='^', color='red')
-plt.legend(loc="upper right", fontsize=12)
-plt.xlabel("SNR [dB]", fontsize=14)
-plt.ylabel("Error probability [%]", fontsize=14)
-plt.grid()
+if False:
+    # Figure: lower and upper bounds on mismatch
+    with plt.style.context(['science', 'grid']):
+        fig, axe = plt.subplots(figsize=(8.4, 8.4))
+        im1 ,= plt.plot(Parkinson30["SNR"], Parkinson30["Upper bound (mismatch probability)"], label='Parkinson\'s disease (Train, Upper bound)', marker='v', color='blue')
+        im2 ,= plt.plot(Parkinson30["SNR"], Parkinson30["Lower bound (mismatch probability)"], label='Parkinson\'s disease (Train, Lower bound)', marker='^', color='blue')
+        im3 ,= plt.plot(Parkinson30["SNR"], Parkinson30["Mismatch probability (Vanilla GD)"], label='Parkinson\'s disease (Test, Optimized)', linestyle='-', marker='', color='blue')
+        im4 ,= plt.plot(Heart45["SNR"], Heart45["Upper bound (mismatch probability)"], label='Heart disease (Train, Upper bound)', linestyle='--', marker='v', color='green')
+        im5 ,= plt.plot(Heart45["SNR"], Heart45["Lower bound (mismatch probability)"], label='Heart disease (Train, Lower bound)', linestyle='--', marker='^', color='green')
+        im6 ,= plt.plot(Heart45["SNR"], Heart45["Mismatch probability (Vanilla GD)"], label='Heart disease (Test, Optimized)', linestyle='--', marker='', color='green')
+        im7 ,= plt.plot(Cancer60["SNR"], Cancer60["Upper bound (mismatch probability)"], label='Breast cancer (Train, Upper bound)', linestyle=':', marker='v', color='red')
+        im8 ,= plt.plot(Cancer60["SNR"], Cancer60["Lower bound (mismatch probability)"], label='Breast cancer (Train, Lower bound)', linestyle=':', marker='^', color='red')
+        im9 ,= plt.plot(Cancer60["SNR"], Cancer60["Mismatch probability (Vanilla GD)"], label='Breast cancer (Test, Optimized)', linestyle=':', marker='', color='red')
 
-# Figure: Overall mismatch improvements plot
-fig = plt.figure()
-plt.plot(np.tile(Heart15["SNR"], 4), np.concatenate((Heart15Gain, Heart30Gain, Heart45Gain, Heart60Gain), axis=None), label='Heart disease, T=15, 30, 45, 60', linestyle='', marker='o', color='blue')
-plt.plot(np.tile(Cancer15["SNR"], 4), np.concatenate((Cancer15Gain, Cancer30Gain, Cancer45Gain, Cancer60Gain), axis=None), label='Breast cancer, T=15, 30, 45, 60', linestyle='', marker='o', color='green')
-plt.plot(np.tile(Parkinson15["SNR"], 4), np.concatenate((Parkinson15Gain, Parkinson30Gain, Parkinson45Gain, Parkinson60Gain), axis=None), label='Parkinson\'s disease, T=15, 30, 45, 60', linestyle='', marker='o', color='red')
-plt.legend(loc="upper right", fontsize=12)
-plt.xlabel("SNR [dB]", fontsize=14)
-plt.ylabel("Error probability improvement [%]", fontsize=14)
-plt.grid()
+        # create blank rectangle
+        extra = Rectangle((0, 0), 1, 1, fc="w", fill=False, edgecolor='none', linewidth=0)
+        # Create organized list containing all handles for table. Extra represent empty space
+        legend_handle = [extra, extra, extra, extra, extra, im1, im2, im3, extra, im4, im5, im6, extra, im7, im8, im9]
+        # Define the labels
+        label_row_1 = ["", r"Upper bnd (Train)", r"Lower bnd (Train)", r"Optimized (Test)"]
+        label_j_1 = [r"Parkinson"]
+        label_j_2 = [r"Heart disease"]
+        label_j_3 = [r"Breast cancer"]
+        label_empty = [""]
+        # organize labels for table construction
+        legend_labels = np.concatenate(
+            [label_row_1, label_j_1, label_empty * 3, label_j_2, label_empty * 3, label_j_3, label_empty * 3])
+        # Create legend
+        axe.legend(legend_handle, legend_labels, fontsize=14,
+                  loc='upper right', ncol=4, shadow=False, handletextpad=-2, framealpha=0.8)
 
+        # plt.legend(fontsize=16, ncol=1, loc='upper right', framealpha=0.8)
+        plt.xlabel(r'SNR [dB]', fontsize=20)
+        plt.ylabel(r'Mismatch probability [\%]', fontsize=20)
+        plt.xticks(fontsize=20)
+        plt.yticks(fontsize=20)
+        plt.ylim([0, 50])
+        plt.xlim([-25, 10])
+        plt.show()
 
-#  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-# All error probability improvement vs snr for ascending T plots
-fig = plt.figure()
-plt.plot(Heart15["SNR"], Heart15Gain, label='T=15', linestyle='', marker='o')
-plt.plot(Heart30["SNR"], Heart30Gain, label='T=30', linestyle='', marker='o')
-plt.plot(Heart45["SNR"], Heart45Gain, label='T=45', linestyle='', marker='s')
-plt.legend(loc="upper right", fontsize=12)
-plt.title("Heart disease")
-plt.xlabel("SNR [dB]", fontsize=14)
-plt.ylabel("Mismatch probability improvement [%]", fontsize=14)
-plt.grid()
+    # fig.savefig('mismatch_bounds.png', format='png', dpi=300)
+    fig.savefig('mismatch_bounds.pdf')
 
-fig = plt.figure()
-plt.plot(Cancer15["SNR"], Cancer15Gain, label='Breast cancer, T=15', linestyle='', marker='o')
-plt.plot(Cancer30["SNR"], Cancer30Gain, label='Breast cancer, T=30', linestyle='', marker='o')
-plt.plot(Cancer45["SNR"], Cancer45Gain, label='Breast cancer, T=45', linestyle='', marker='s')
-plt.plot(Cancer60["SNR"], Cancer60Gain, label='Breast cancer, T=60', linestyle='', marker='s')
-plt.legend(loc="upper right", fontsize=12)
-plt.title("Breast cancer")
-plt.xlabel("SNR [dB]", fontsize=14)
-plt.ylabel("Mismatch probability improvement [%]", fontsize=14)
-plt.grid()
+if True:
+    # Figure: SNR gain
+    def getSnrGain(Data, nPoints):
+        x = Data["SNR"].values
+        # y_interp = np.linspace(0, 50, num=51)
 
-fig = plt.figure()
-plt.plot(Parkinson15["SNR"], Parkinson15Gain, label='Parkinson\'s disease, T=15', linestyle='', marker='o')
-plt.plot(Parkinson30["SNR"], Parkinson30Gain, label='Parkinson\'s disease, T=30', linestyle='', marker='o')
-plt.plot(Parkinson45["SNR"], Parkinson45Gain, label='Parkinson\'s disease, T=45', linestyle='', marker='s')
-plt.plot(Parkinson60["SNR"], Parkinson60Gain, label='Parkinson\'s disease, T=60', linestyle='', marker='s')
-plt.legend(loc="upper right", fontsize=12)
-plt.xlabel("SNR [dB]", fontsize=14)
-plt.ylabel("Mismatch probability improvement [%]", fontsize=14)
-plt.grid()
+        y1 = Data["Error probability (joint: alpha, beta)"].values
+        y_interp = np.linspace(np.min(y1), np.max(y1), num=nPoints)
+        ind = np.argsort(y1)
+        x1_interp = np.interp(y_interp, y1[ind], x[ind])
+        # fig = plt.figure()
+        # plt.plot(y1, x, linestyle='', marker='o', color='blue')
+        # plt.plot(y_interp, x1_interp, linestyle='', marker='x', color='blue')
 
-# Table: calculate improvement for each (dataset,T) pair at SNR=-10dB. Add in table to paper.
-# targetSNR=-9
-# aa=[
-# ["Heart", Heart15Gain[Heart15["SNR"]==targetSNR], Heart30Gain[Heart30["SNR"]==targetSNR], Heart45Gain[Heart45["SNR"]==targetSNR], 0],
-# ["Cancer", Cancer15Gain[Parkinson15["SNR"]==targetSNR], Cancer30Gain[Parkinson30["SNR"]==targetSNR], Cancer45Gain[Parkinson45["SNR"]==targetSNR], Cancer60Gain[Parkinson45["SNR"]==targetSNR]],
-# ["Parkinson", Parkinson15Gain[Parkinson15["SNR"]==targetSNR], Parkinson30Gain[Parkinson30["SNR"]==targetSNR], Parkinson45Gain[Parkinson45["SNR"]==targetSNR], Parkinson60Gain[Parkinson45["SNR"]==targetSNR]]
-#     ]
+        y2 = Data["Error probability (alpha, uniform beta)"].values
+        # y_interp = np.linspace(np.min(y1), np.max(y1), num=51)
+        ind = np.argsort(y2)
+        x2_interp = np.interp(y_interp, y2[ind], x[ind])
+        # fig = plt.figure()
+        # plt.plot(y2, x, linestyle='', marker='o', color='blue')
+        # plt.plot(y_interp, x2_interp, linestyle='', marker='x', color='blue')
 
-fig = plt.figure()
-plt.plot(Heart15["SNR"], Heart15Gain, label='Heart disease, T=15', linestyle='', marker='o', color='blue')
-plt.plot(Heart30["SNR"], Heart30Gain, label='Heart disease, T=30', linestyle='', marker='o', color='blue')
-plt.plot(Heart45["SNR"], Heart45Gain, label='Heart disease, T=45', linestyle='', marker='o', color='blue')
-plt.plot(Heart45["SNR"], Heart60Gain, label='Heart disease, T=45', linestyle='', marker='o', color='blue')
-plt.plot(Cancer15["SNR"], Cancer15Gain, label='Breast cancer, T=15', linestyle='', marker='s', color='green')
-plt.plot(Cancer30["SNR"], Cancer30Gain, label='Breast cancer, T=30', linestyle='', marker='s', color='green')
-plt.plot(Cancer45["SNR"], Cancer45Gain, label='Breast cancer, T=45', linestyle='', marker='s', color='green')
-plt.plot(Cancer60["SNR"], Cancer60Gain, label='Breast cancer, T=60', linestyle='', marker='s', color='green')
-plt.plot(Parkinson15["SNR"], Parkinson15Gain, label='Parkinson\'s disease, T=15', linestyle='', marker='o', color='red')
-plt.plot(Parkinson30["SNR"], Parkinson30Gain, label='Parkinson\'s disease, T=30', linestyle='', marker='o', color='red')
-plt.plot(Parkinson45["SNR"], Parkinson45Gain, label='Parkinson\'s disease, T=45', linestyle='', marker='o', color='red')
-plt.plot(Parkinson60["SNR"], Parkinson60Gain, label='Parkinson\'s disease, T=60', linestyle='', marker='o', color='red')
-plt.legend(loc="upper right", fontsize=12)
-plt.xlabel("SNR [dB]", fontsize=14)
-plt.ylabel("Error probability improvement [%]", fontsize=14)
-plt.grid()
+        return y_interp, x2_interp-x1_interp
 
+    # Parkinson
+    nPoints = 20
+    x, y = np.zeros([nPoints,]), np.zeros([nPoints,])
 
-# All mismatch probability vs snr plots
-fig = plt.figure()
-plt.plot(Heart15["SNR"], Heart15["Mismatch probability (trivial)"], label='Trivial, T=15', color='blue')
-plt.plot(Heart15["SNR"], Heart15["Mismatch probability (Optimized GD)"], label='Optimal (GD), T=15')
-plt.plot(Heart30["SNR"], Heart30["Mismatch probability (trivial)"], label='Trivial, T=30', linestyle='--')
-plt.plot(Heart30["SNR"], Heart30["Mismatch probability (Optimized GD)"], label='Optimal (GD), T=30', linestyle='--')
-plt.plot(Heart45["SNR"], Heart45["Mismatch probability (trivial)"], label='Trivial, T=45', linestyle='-.')
-plt.plot(Heart45["SNR"], Heart45["Mismatch probability (Optimized GD)"], label='Optimal (GD), T=45', linestyle='-.')
-plt.plot(Heart60["SNR"], Heart60["Mismatch probability (trivial)"], label='Trivial, T=60', linestyle=':')
-plt.plot(Heart60["SNR"], Heart60["Mismatch probability (Optimized GD)"], label='Optimal (GD), T=60', linestyle=':')
-plt.legend(loc="upper right", fontsize=12)
-# plt.title(str(database) + "\n Number of Estimators:" + str(numBaseClassifiers))
-plt.xlabel("SNR [dB]", fontsize=14)
-plt.ylabel("Mismatch probability [%]", fontsize=14)
-plt.grid()
+    x11, y11 = getSnrGain(Parkinson_T1_G1, nPoints)
+    x12, y12 = getSnrGain(Parkinson_T1_G2, nPoints)
+    x13, y13 = getSnrGain(Parkinson_T1_G3, nPoints)
 
-fig = plt.figure()
-plt.plot(Heart15["SNR"], Heart15["Error probability (trivial)"], label='Trivial, T=15', color='blue')
-plt.plot(Heart15["SNR"], Heart15["Error probability (Optimized GD)"], label='Optimal (GD), T=15')
-plt.plot(Heart30["SNR"], Heart30["Error probability (trivial)"], label='Trivial, T=30', linestyle='--')
-plt.plot(Heart30["SNR"], Heart30["Error probability (Optimized GD)"], label='Optimal (GD), T=30', linestyle='--')
-plt.plot(Heart45["SNR"], Heart45["Error probability (trivial)"], label='Trivial, T=45', linestyle='-.')
-plt.plot(Heart45["SNR"], Heart45["Error probability (Optimized GD)"], label='Optimal (GD), T=45', linestyle='-.')
-plt.plot(Heart60["SNR"], Heart60["Error probability (trivial)"], label='Trivial, T=60', linestyle=':')
-plt.plot(Heart60["SNR"], Heart60["Error probability (Optimized GD)"], label='Optimal (GD), T=60', linestyle=':')
-plt.legend(loc="upper right", fontsize=12)
-# plt.title(str(database) + "\n Number of Estimators:" + str(numBaseClassifiers))
-plt.xlabel("SNR [dB]", fontsize=14)
-plt.ylabel("Error probability [%]", fontsize=14)
-plt.grid()
+    x21, y21 = getSnrGain(Heart_T2_G1, nPoints)
+    x22, y22 = getSnrGain(Heart_T2_G2, nPoints)
+    x23, y23 = getSnrGain(Heart_T2_G3, nPoints)
 
+    x31, y31 = getSnrGain(Cancer_T3_G1, nPoints)
+    x32, y32 = getSnrGain(Cancer_T3_G2, nPoints)
+    x33, y33 = getSnrGain(Cancer_T3_G3, nPoints)
 
-# plot mismatch probability vs snr
-fig = plt.figure()
-plt.plot(Cancer15["SNR"], Cancer15["Mismatch probability (trivial)"], label='Trivial', color='blue')
-plt.plot(Cancer15["SNR"], Cancer15["Mismatch probability (Optimized GD)"], label='Optimal (GD)')
-plt.plot(Cancer30["SNR"], Cancer30["Mismatch probability (trivial)"], label='Trivial', linestyle='--', color='blue')
-plt.plot(Cancer30["SNR"], Cancer30["Mismatch probability (Optimized GD)"], label='Optimal (GD)', linestyle='--')
-plt.plot(Cancer45["SNR"], Cancer45["Mismatch probability (trivial)"], label='Trivial', linestyle='-.', color='blue')
-plt.plot(Cancer45["SNR"], Cancer45["Mismatch probability (Optimized GD)"], label='Optimal (GD)', linestyle='-.')
-plt.plot(Cancer60["SNR"], Cancer60["Mismatch probability (trivial)"], label='Trivial', linestyle=':', color='blue')
-plt.plot(Cancer60["SNR"], Cancer60["Mismatch probability (Optimized GD)"], label='Optimal (GD)', linestyle=':')
-plt.legend(loc="upper right", fontsize=12)
-# plt.title(str(database) + "\n Number of Estimators:" + str(numBaseClassifiers))
-plt.xlabel("SNR [dB]", fontsize=14)
-plt.ylabel("Mismatch probability [%]", fontsize=14)
-plt.grid()
+    with plt.style.context(['science', 'grid']):
+        fig, axe = plt.subplots(figsize=(8.4, 8.4))
 
-fig = plt.figure()
-plt.plot(Parkinson15["SNR"], Parkinson15["Mismatch probability (trivial)"], label='Trivial', color='blue')
-plt.plot(Parkinson15["SNR"], Parkinson15["Mismatch probability (Optimized GD)"], label='Optimal (GD)')
-plt.plot(Parkinson30["SNR"], Parkinson30["Mismatch probability (trivial)"], label='Trivial', linestyle='--', color='blue')
-plt.plot(Parkinson30["SNR"], Parkinson30["Mismatch probability (Optimized GD)"], label='Optimal (GD)', linestyle='--')
-plt.plot(Parkinson45["SNR"], Parkinson45["Mismatch probability (trivial)"], label='Trivial', linestyle='-.', color='blue')
-plt.plot(Parkinson45["SNR"], Parkinson45["Mismatch probability (Optimized GD)"], label='Optimal (GD)', linestyle='-.')
-plt.plot(Parkinson60["SNR"], Parkinson60["Mismatch probability (trivial)"], label='Trivial', linestyle=':', color='blue')
-plt.plot(Parkinson60["SNR"], Parkinson60["Mismatch probability (Optimized GD)"], label='Optimal (GD)', linestyle=':')
-plt.legend(loc="upper right", fontsize=12)
-# plt.title(str(database) + "\n Number of Estimators:" + str(numBaseClassifiers))
-plt.xlabel("SNR [dB]", fontsize=14)
-plt.ylabel("Mismatch probability [%]", fontsize=14)
-plt.grid()
+        plt.plot(x11, y11, linestyle='', marker='o', color='blue', markersize=3, label='Parkinson, T=30, $G='+G1_str+"$")
+        plt.plot(x12, y12, linestyle='', marker='o', color='blue', markersize=6, label='Parkinson, T=30, $G='+G2_str+"$")
+        plt.plot(x13, y13, linestyle='', marker='o', color='blue', markersize=9, label='Parkinson, T=30, $G='+G3_str+"$")
+
+        plt.plot(x21, y21, linestyle='', marker='o', color='green', markersize=3, label='Heart, T=45, $G='+G1_str+"$")
+        plt.plot(x22, y22, linestyle='', marker='o', color='green', markersize=6,  label='Heart, T=45, $G='+G2_str+"$")
+        plt.plot(x23, y23, linestyle='', marker='o', color='green', markersize=9, label='Heart, T=45, $G='+G3_str+"$")
+
+        plt.plot(x31, y31, linestyle='', marker='o', color='red', markersize=3, label='Cancer, T=60, $G='+G1_str+"$")
+        plt.plot(x32, y32, linestyle='', marker='o', color='red', markersize=6, label='Cancer, T=60, $G='+G2_str+"$")
+        plt.plot(x33, y33, linestyle='', marker='o', color='red', markersize=9, label='Cancer, T=60, $G='+G3_str+"$")
+
+        plt.legend(fontsize=9.5, ncol=3, loc='lower center', framealpha=0.8)
+        plt.xlabel(r'Error probability [\%]', fontsize=15)
+        plt.ylabel(r'SNR gain [dB]', fontsize=15)
+        plt.xticks(fontsize=15)
+        plt.yticks(fontsize=15)
+        plt.ylim([0, 15])
+        # plt.xlim([-25, 10])
+        plt.show()
+
+    # fig.savefig('snr_gain.png', format='png', dpi=300)
+    fig.savefig('snr_gain_a_g.pdf', format='pdf')

@@ -30,17 +30,17 @@ class NoisyPredictor_:
         numBaseClassifiers = np.size(confidenceLevels, 0)
         N = np.size(confidenceLevels, 1)
         ones_vec = np.ones([1, numBaseClassifiers])
-        denom = np.sum(noiseVars)
         if pNorm == 1:
             coeff = 0 %powerLimit / numBaseClassifiers
         if pNorm == 2:
-            coeff = powerLimit**2 / numBaseClassifiers
+            coeff = powerLimit / (numBaseClassifiers*np.sum(noiseVars))
         UB = 0
         for i in range(N):
             hi = confidenceLevels[:, i]
             hi = hi.reshape(hi.shape[0], -1)  # 1D array to column vector
-            Hi = hi @ hi.T
-            UB += QFunc(np.sqrt(coeff * ones_vec @ Hi @ ones_vec.T / denom))
+            # Hi = hi @ hi.T
+            # UB += QFunc(np.sqrt(coeff * ones_vec @ Hi @ ones_vec.T))
+            UB += QFunc(np.sqrt(coeff * hi.T @ hi))
         UB = np.squeeze(UB) / N
         return UB
 
