@@ -46,7 +46,7 @@ numBaseClassifiersList = [30, 45, 60] #[15, 30] # [15, 30, 45, 60]  # loop over 
 # powerLimitList = [np.sqrt(60), 60, 60**2]  # power limitation, sum_t \beta_t^2 < PowerLimit
 pNorm = 2  # parameter p for p-norm in constraint for \beta
 train_size = 0.8  # fraction of database used for training
-simIterNum = 100  # number of iterations for each SNR
+simIterNum = 500  # number of iterations for each SNR
 
 # model parameters
 confidence_eps = 1e-8  # tolerance value to preventing division by 0 in confidence-level calculation
@@ -60,8 +60,8 @@ decay_rate = 0.2  # gradient-descent momentum
 tol_val_baseline = 5e-4  # tolerance value to stop optimization upon convergence
 
 # init snr array
-snr_array_db = np.arange(-20, 16, 1)
-snr_array_db = np.array([-30, -25, -20, -15, -10, -5, 0, 5, 10, 15])
+snr_array_db = np.arange(-30, 16, 1)
+# snr_array_db = np.array([-30, -25, -20, -15, -10, -5, 0, 5, 10, 15])
 # snr_array_db = np.array([0])
 snr_array = 10 ** (snr_array_db / 10)
 
@@ -87,6 +87,13 @@ for numBaseClassifiers in numBaseClassifiersList:
         for database_idx, database in enumerate(databaseList):
             print('Database: ' + database)
             database_path = databasePathList[database_idx]
+
+            if database == "Wisconsin Breast Cancer Database" and numBaseClassifiers != 60:
+                continue
+            if database == "Heart Diseases Database" and numBaseClassifiers != 45:
+                continue
+            if database == "Parkinson Database" and numBaseClassifiers != 30:
+                continue
 
             # create csv file with header
             pathToCsvFile = resultsFolderPath + database + "_" + datetime.datetime.now().strftime("%d_%m_%Y-%H_%M_%S") + ".csv"
