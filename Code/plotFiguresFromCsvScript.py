@@ -42,23 +42,23 @@ Parkinson30 = pd.read_csv(resultsFolderPath + filenameParkinson30 + ".csv")
 Parkinson45 = pd.read_csv(resultsFolderPath + filenameParkinson45 + ".csv")
 Parkinson60 = pd.read_csv(resultsFolderPath + filenameParkinson60 + ".csv")
 
-# Figure: Parkinson, T=30; Heart, T=45; Cancer, T=60
-if False:
+# Figure: Error prob of: Parkinson, T=30; Heart, T=45; Cancer, T=60
+if True:
     with plt.style.context(['science', 'grid']):
         fig, axe = plt.subplots(figsize=(8.4,8.4))
         im1 ,= plt.plot(Parkinson30["SNR"], Parkinson30["Error probability (trivial)"], label="Parkinson, T=30, Unweighted", marker='', color='blue')
         im2 ,= plt.plot(Heart45["SNR"], Heart45["Error probability (trivial)"], label="Heart, T=45, Unweighted", linestyle='--', marker='', color='green')
         im3 ,= plt.plot(Cancer60["SNR"], Cancer60["Error probability (trivial)"], label="Cancer, T=60, Unweighted", linestyle=':', marker='', color='red')
-        im4 ,= plt.plot(Parkinson30["SNR"], Parkinson30["Error probability (Vanilla GD)"], label="Parkinson, T=30, Alg. 3", marker='D', color='blue')
-        im5 ,= plt.plot(Heart45["SNR"], Heart45["Error probability (Vanilla GD)"], label="Heart, T=45, Alg. 3", linestyle='--', marker='D', color='green')
-        im6 ,= plt.plot(Cancer60["SNR"], Cancer60["Error probability (Vanilla GD)"], label="Cancer, T=60, Alg. 3", linestyle=':', marker='D', color='red')
+        im4 ,= plt.plot(Parkinson30["SNR"], Parkinson30["Error probability (Vanilla GD)"], label="Parkinson, T=30, Alg. 2\'", marker='D', color='blue')
+        im5 ,= plt.plot(Heart45["SNR"], Heart45["Error probability (Vanilla GD)"], label="Heart, T=45, Alg. 2\'", linestyle='--', marker='D', color='green')
+        im6 ,= plt.plot(Cancer60["SNR"], Cancer60["Error probability (Vanilla GD)"], label="Cancer, T=60, Alg. 2\'", linestyle=':', marker='D', color='red')
 
         # specify the lines and labels of the first legend
         axe.legend([im1, im2, im3], [im1._label, im2._label, im3._label],
-                  loc='lower left', framealpha=0.8, fontsize=16)
+                  loc='lower left', framealpha=0.8, fontsize=20)
         # Create the second legend and add the artist manually.
         leg = Legend(axe, [im4, im5, im6], [im4._label, im5._label, im6._label],
-                     loc='upper right', framealpha=0.8, fontsize=16)
+                     loc='upper right', framealpha=0.8, fontsize=20)
         axe.add_artist(leg)
 
         # plt.legend(fontsize=16, ncol=1, loc='upper right', framealpha=0.8)
@@ -92,16 +92,16 @@ if True:
         # Create organized list containing all handles for table. Extra represent empty space
         legend_handle = [extra, extra, extra, extra, extra, im1, im2, im3, extra, im4, im5, im6, extra, im7, im8, im9]
         # Define the labels
-        label_row_1 = ["", r"Upper bnd (Train)", r"Lower bnd (Train)", r"Alg. 3 (Test)"]
-        label_j_1 = [r"Parkinson"]
-        label_j_2 = [r"Heart disease"]
-        label_j_3 = [r"Breast cancer"]
+        label_row_1 = ["", "Upper bnd (Train)", "Lower bnd (Train)", "Alg. 2\' (Test)"]
+        label_j_1 = ["Parkinson"]
+        label_j_2 = ["Heart disease"]
+        label_j_3 = ["Breast cancer"]
         label_empty = [""]
         # organize labels for table construction
         legend_labels = np.concatenate(
             [label_row_1, label_j_1, label_empty * 3, label_j_2, label_empty * 3, label_j_3, label_empty * 3])
         # Create legend
-        axe.legend(legend_handle, legend_labels, fontsize=14,
+        axe.legend(legend_handle, legend_labels, fontsize=15,
                   loc='upper right', ncol=4, shadow=False, handletextpad=-2, framealpha=0.8)
 
         plt.xlabel(r'SNR [dB]', fontsize=20)
@@ -171,10 +171,10 @@ if True:
         plt.plot(x33, y33, linestyle='', marker='o', color='red', markersize=9, label='Cancer, T=60')
 
         plt.legend(fontsize=15, ncol=3, loc='upper center', framealpha=0.8)
-        plt.xlabel(r'Error probability [\%]', fontsize=15)
-        plt.ylabel(r'SNR gain [dB]', fontsize=15)
-        plt.xticks(fontsize=15)
-        plt.yticks(fontsize=15)
+        plt.xlabel(r'Error probability [\%]', fontsize=20)
+        plt.ylabel(r'SNR gap [dB]', fontsize=20)
+        plt.xticks(fontsize=20)
+        plt.yticks(fontsize=20)
         plt.ylim([0,12])
         plt.show()
 
@@ -266,16 +266,16 @@ if True:
         im1 ,= plt.plot(Parkinson_T1_G1["SNR"], Parkinson_T1_G1["Error probability (trivial)"], label="Parkinson, T=30, Unweighted", marker='', color='blue')
         im2 ,= plt.plot(Heart_T2_G2["SNR"], Heart_T2_G2["Error probability (trivial)"], label="Heart, T=45, Unweighted", linestyle='--', marker='', color='green')
         im3 ,= plt.plot(Cancer_T3_G3["SNR"], Cancer_T3_G3["Error probability (trivial)"], label="Cancer, T=60, Unweighted", linestyle=':', marker='', color='red')
-        im4 ,= plt.plot(Parkinson_T1_G1["SNR"], Parkinson_T1_G1["Error probability (alpha, unit beta)"], label="Parkinson, T=30, Alg. 3", marker='D', color='blue')
-        im5 ,= plt.plot(Heart_T2_G2["SNR"], Heart_T2_G2["Error probability (alpha, unit beta)"], label="Heart, T=45, Alg. 3", linestyle='--', marker='D', color='green')
-        im6 ,= plt.plot(Cancer_T3_G3["SNR"], Cancer_T3_G3["Error probability (alpha, unit beta)"], label="Cancer, T=60, Alg. 3", linestyle=':', marker='D', color='red')
+        im4 ,= plt.plot(Parkinson_T1_G1["SNR"], Parkinson_T1_G1["Error probability (alpha, unit beta)"], label="Parkinson, T=30, Alg. 2\'", marker='D', color='blue')
+        im5 ,= plt.plot(Heart_T2_G2["SNR"], Heart_T2_G2["Error probability (alpha, unit beta)"], label="Heart, T=45, Alg. 2\'", linestyle='--', marker='D', color='green')
+        im6 ,= plt.plot(Cancer_T3_G3["SNR"], Cancer_T3_G3["Error probability (alpha, unit beta)"], label="Cancer, T=60, Alg. 2\'", linestyle=':', marker='D', color='red')
 
         # specify the lines and labels of the first legend
         axe.legend([im1, im2, im3], [im1._label, im2._label, im3._label],
-                  loc='lower left', framealpha=0.8, fontsize=16)
+                  loc='lower left', framealpha=0.8, fontsize=20)
         # Create the second legend and add the artist manually.
         leg = Legend(axe, [im4, im5, im6], [im4._label, im5._label, im6._label],
-                     loc='upper right', framealpha=0.8, fontsize=16)
+                     loc='upper right', framealpha=0.8, fontsize=20)
         axe.add_artist(leg)
 
         # plt.legend(fontsize=16, ncol=1, loc='upper right', framealpha=0.8)
@@ -351,7 +351,7 @@ if False:
 
         plt.legend(fontsize=10, ncol=3, loc='upper center', framealpha=0.8)
         plt.xlabel(r'Error probability [\%]', fontsize=15)
-        plt.ylabel(r'SNR gain [dB]', fontsize=15)
+        plt.ylabel(r'SNR gap [dB]', fontsize=15)
         plt.xticks(fontsize=15)
         plt.yticks(fontsize=15)
         plt.ylim([0,12])
@@ -365,16 +365,16 @@ if False:
 G1_str, G2_str, G3_str = "T/100", "\sqrt{T}", "T"
 T1, T2, T3 = 30, 45, 60
 
-# Figure: Error probability of alpha, gain
+# Figure: Error probabilities of alpha, gain for all 3 datasets
 if True:
     with plt.style.context(['science', 'grid']):
         fig, axe = plt.subplots(figsize=(8.4, 8.4))
         im1 ,= plt.plot(Parkinson_T1_G1["SNR"], Parkinson_T1_G1["Error probability (joint: alpha, beta)"], label="Parkinson, $G="+G1_str+"$, Alg. 2", linestyle=':', marker='o', color='blue', markersize=3)
         im2 ,= plt.plot(Parkinson_T1_G2["SNR"], Parkinson_T1_G2["Error probability (joint: alpha, beta)"], label="Parkinson, $G="+G2_str+"$, Alg. 2", linestyle='--', marker='o', color='blue', markersize=6)
         im3 ,= plt.plot(Parkinson_T1_G3["SNR"], Parkinson_T1_G3["Error probability (joint: alpha, beta)"], label="Parkinson, $G="+G3_str+"$, Alg. 2", linestyle='-', marker='o', color='blue', markersize=9)
-        im4 ,= plt.plot(Parkinson_T1_G3["SNR"], Parkinson_T1_G3["Error probability (alpha, unit beta)"], label="Parkinson, Alg. 3", linestyle='-', marker='x', color='blue', markersize=9)
-        # im4 ,= plt.plot(Parkinson30["SNR"], Parkinson30["Error probability (Vanilla GD)"], label="Parkinson, , Alg. 3", linestyle='-', marker='x', color='blue', markersize=9)
-        axe.legend(fontsize=14, loc='lower left', ncol=1, shadow=False, framealpha=0.8)
+        im4 ,= plt.plot(Parkinson_T1_G3["SNR"], Parkinson_T1_G3["Error probability (alpha, unit beta)"], label="Parkinson, Alg. 2\'", linestyle='-', marker='x', color='blue', markersize=9)
+        # im4 ,= plt.plot(Parkinson30["SNR"], Parkinson30["Error probability (Vanilla GD)"], label="Parkinson, , Alg. 2\'", linestyle='-', marker='x', color='blue', markersize=9)
+        axe.legend(fontsize=20, loc='lower left', ncol=1, shadow=False, framealpha=0.8)
         plt.xlabel(r'SNR [dB]', fontsize=20)
         plt.ylabel(r'Error probability [\%]', fontsize=20)
         plt.xticks(fontsize=20)
@@ -389,11 +389,11 @@ if True:
         im1 ,= plt.plot(Heart_T2_G1["SNR"], Heart_T2_G1["Error probability (joint: alpha, beta)"], label="Heart, $G="+G1_str+"$, Alg. 2", linestyle=':', marker='o', color='green', markersize=3)
         im2 ,= plt.plot(Heart_T2_G2["SNR"], Heart_T2_G2["Error probability (joint: alpha, beta)"], label="Heart, $G="+G2_str+"$, Alg. 2", linestyle='--', marker='o', color='green', markersize=6)
         im3 ,= plt.plot(Heart_T2_G3["SNR"], Heart_T2_G3["Error probability (joint: alpha, beta)"], label="Heart, $G="+G3_str+"$, Alg. 2", linestyle='-', marker='o', color='green', markersize=9)
-        im4 ,= plt.plot(Heart_T2_G3["SNR"], Heart_T2_G3["Error probability (alpha, unit beta)"], label="Heart, Alg. 3", linestyle='-', marker='x', color='green', markersize=9)
-        # im4 ,= plt.plot(Heart45["SNR"], Heart45["Error probability (Optimized GD)"], label="Heart, Alg. 3", linestyle='-', marker='x', color='green', markersize=9)
-        axe.legend(fontsize=14, loc='lower left', ncol=1, shadow=False, framealpha=0.8)
+        im4 ,= plt.plot(Heart_T2_G3["SNR"], Heart_T2_G3["Error probability (alpha, unit beta)"], label="Heart, Alg. 2\'", linestyle='-', marker='x', color='green', markersize=9)
+        # im4 ,= plt.plot(Heart45["SNR"], Heart45["Error probability (Optimized GD)"], label="Heart, Alg. 2\'", linestyle='-', marker='x', color='green', markersize=9)
+        axe.legend(fontsize=20, loc='lower left', ncol=1, shadow=False, framealpha=0.8)
         plt.xlabel(r'SNR [dB]', fontsize=20)
-        plt.ylabel(r'Mismatch probability [\%]', fontsize=20)
+        plt.ylabel(r'Error probability [\%]', fontsize=20)
         plt.xticks(fontsize=20)
         plt.yticks(fontsize=20)
         plt.ylim([0, 50])
@@ -406,11 +406,11 @@ if True:
         im1 ,= plt.plot(Cancer_T3_G1["SNR"], Cancer_T3_G1["Error probability (joint: alpha, beta)"], label="Cancer, $G="+G1_str+"$, Alg. 2", linestyle='--', marker='o', color='red', markersize=3)
         im2 ,= plt.plot(Cancer_T3_G2["SNR"], Cancer_T3_G2["Error probability (joint: alpha, beta)"], label="Cancer, $G="+G2_str+"$, Alg. 2", linestyle='--', marker='o', color='red', markersize=6)
         im3 ,= plt.plot(Cancer_T3_G3["SNR"], Cancer_T3_G3["Error probability (joint: alpha, beta)"], label="Cancer, $G="+G3_str+"$, Alg. 2", linestyle='--', marker='o', color='red', markersize=9)
-        im4 ,= plt.plot(Cancer_T3_G3["SNR"], Cancer_T3_G3["Error probability (alpha, unit beta)"], label="Cancer, Alg. 3", linestyle='-', marker='x', color='red', markersize=9)
-        # im4 ,= plt.plot(Cancer60["SNR"], Cancer60["Error probability (Vanilla GD)"], label="Cancer, Alg. 3", linestyle='-', marker='x', color='red', markersize=9)
-        axe.legend(fontsize=14, loc='lower left', ncol=1, shadow=False, framealpha=0.8)
+        im4 ,= plt.plot(Cancer_T3_G3["SNR"], Cancer_T3_G3["Error probability (alpha, unit beta)"], label="Cancer, Alg. 2\'", linestyle='-', marker='x', color='red', markersize=9)
+        # im4 ,= plt.plot(Cancer60["SNR"], Cancer60["Error probability (Vanilla GD)"], label="Cancer, Alg. 2\'", linestyle='-', marker='x', color='red', markersize=9)
+        axe.legend(fontsize=20, loc='upper right', ncol=1, shadow=False, framealpha=0.8)
         plt.xlabel(r'SNR [dB]', fontsize=20)
-        plt.ylabel(r'Mismatch probability [\%]', fontsize=20)
+        plt.ylabel(r'Error probability [\%]', fontsize=20)
         plt.xticks(fontsize=20)
         plt.yticks(fontsize=20)
         plt.ylim([0, 50])
@@ -461,23 +461,41 @@ if True:
     with plt.style.context(['science', 'grid']):
         fig, axe = plt.subplots(figsize=(8.4, 8.4))
 
-        plt.plot(x11, y11, linestyle='', marker='o', color='blue', markersize=3, label='Parkinson, T=30, $G='+G1_str+"$")
-        plt.plot(x12, y12, linestyle='', marker='o', color='blue', markersize=6, label='Parkinson, T=30, $G='+G2_str+"$")
-        plt.plot(x13, y13, linestyle='', marker='o', color='blue', markersize=9, label='Parkinson, T=30, $G='+G3_str+"$")
+        im1 ,= plt.plot(x11, y11, linestyle='', marker='o', color='blue', markersize=3, label='Parkinson, T=30, $G='+G1_str+"$")
+        im2 ,= plt.plot(x12, y12, linestyle='', marker='o', color='blue', markersize=6, label='Parkinson, T=30, $G='+G2_str+"$")
+        im3 ,= plt.plot(x13, y13, linestyle='', marker='o', color='blue', markersize=9, label='Parkinson, T=30, $G='+G3_str+"$")
 
-        plt.plot(x21, y21, linestyle='', marker='o', color='green', markersize=3, label='Heart, T=45, $G='+G1_str+"$")
-        plt.plot(x22, y22, linestyle='', marker='o', color='green', markersize=6,  label='Heart, T=45, $G='+G2_str+"$")
-        plt.plot(x23, y23, linestyle='', marker='o', color='green', markersize=9, label='Heart, T=45, $G='+G3_str+"$")
+        im4 ,= plt.plot(x21, y21, linestyle='', marker='o', color='green', markersize=3, label='Heart, T=45, $G='+G1_str+"$")
+        im5 ,= plt.plot(x22, y22, linestyle='', marker='o', color='green', markersize=6,  label='Heart, T=45, $G='+G2_str+"$")
+        im6 ,= plt.plot(x23, y23, linestyle='', marker='o', color='green', markersize=9, label='Heart, T=45, $G='+G3_str+"$")
 
-        plt.plot(x31, y31, linestyle='', marker='o', color='red', markersize=3, label='Cancer, T=60, $G='+G1_str+"$")
-        plt.plot(x32, y32, linestyle='', marker='o', color='red', markersize=6, label='Cancer, T=60, $G='+G2_str+"$")
-        plt.plot(x33, y33, linestyle='', marker='o', color='red', markersize=9, label='Cancer, T=60, $G='+G3_str+"$")
+        im7 ,= plt.plot(x31, y31, linestyle='', marker='o', color='red', markersize=3, label='Cancer, T=60, $G='+G1_str+"$")
+        im8 ,= plt.plot(x32, y32, linestyle='', marker='o', color='red', markersize=6, label='Cancer, T=60, $G='+G2_str+"$")
+        im9 ,= plt.plot(x33, y33, linestyle='', marker='o', color='red', markersize=9, label='Cancer, T=60, $G='+G3_str+"$")
 
-        plt.legend(fontsize=9.5, ncol=3, loc='lower center', framealpha=0.8)
-        plt.xlabel(r'Error probability [\%]', fontsize=15)
-        plt.ylabel(r'SNR gain [dB]', fontsize=15)
-        plt.xticks(fontsize=15)
-        plt.yticks(fontsize=15)
+        # plt.legend(fontsize=9.5, ncol=3, loc='lower center', framealpha=0.8)
+        # create blank rectangle
+        extra = Rectangle((0, 0), 1, 1, fc="w", fill=False, edgecolor='none', linewidth=0)
+        # Create organized list containing all handles for table. Extra represent empty space
+        legend_handle = [extra, extra, extra, extra, extra, im1, im2, im3, extra, im4, im5, im6, extra, im7, im8, im9]
+        # Define the labels
+        label_row_1 = ["", '$G='+G1_str+"$", '$G='+G2_str+"$", '$G='+G3_str+"$"]
+        label_j_1 = ["Parkinson, T=30,"]
+        label_j_2 = ["Heart, T=45"]
+        label_j_3 = ["Cancer, T=60"]
+        label_empty = [""]
+        # organize labels for table construction
+        legend_labels = np.concatenate(
+            [label_row_1, label_j_1, label_empty * 3, label_j_2, label_empty * 3, label_j_3, label_empty * 3])
+        # Create legend
+        axe.legend(legend_handle, legend_labels, fontsize=15,
+                  loc='lower center', ncol=4, shadow=False, handletextpad=-2, framealpha=0.8)
+
+
+        plt.xlabel(r'Error probability [\%]', fontsize=20)
+        plt.ylabel(r'SNR gap [dB]', fontsize=20)
+        plt.xticks(fontsize=20)
+        plt.yticks(fontsize=20)
         plt.ylim([0, 15])
         # plt.xlim([-25, 10])
         plt.show()
