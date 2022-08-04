@@ -101,12 +101,12 @@ for numBaseClassifiers in numBaseClassifiersList:
 
             # initialize result arrays for simulation results
             simulationResultsList = {"Database": [], "Time": [], "SNR": [], "Number of classifiers": [], "Power limit": [],
-                "Lower bound (mismatch probability)": [], "Upper bound (mismatch probability)": [],
-                "Mismatch probability (trivial)": [], "Error probability (trivial)": [],
-                "Mismatch probability (alpha, unit beta)": [], "Error probability (alpha, unit beta)": [],
-                "Mismatch probability (alpha, uniform beta)": [], "Error probability (alpha, uniform beta)": [],
-                "Mismatch probability (alpha, beta)": [], "Error probability (alpha, beta)": [],
-                "Mismatch probability (joint: alpha, beta)": [], "Error probability (joint: alpha, beta)": []}
+                "Lower bound (mismatch probability)": [],           "Upper bound (mismatch probability)": [],
+                "Mismatch probability (trivial)": [],               "Error probability (trivial)": [],
+                "Mismatch probability (alpha, unit beta)": [],      "Error probability (alpha, unit beta)": [],
+                "Mismatch probability (alpha, uniform beta)": [],   "Error probability (alpha, uniform beta)": [],
+                "Mismatch probability (alpha, beta)": [],           "Error probability (alpha, beta)": [],
+                "Mismatch probability (joint: alpha, beta)": [],    "Error probability (joint: alpha, beta)": []}
 
             # loop over SNR values
             for snr in snr_array:

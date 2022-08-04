@@ -74,7 +74,7 @@ if False:
     fig.savefig('error_prob_a_presentation.pdf')
 
 # Figure: lower and upper bounds on mismatch
-if False:
+if False:  # All in one figure
     with plt.style.context(['science', 'grid']):
         fig, axe = plt.subplots(figsize=(8.4, 8.4))
         im1 ,= plt.plot(Parkinson30["SNR"], Parkinson30["Upper bound (mismatch probability)"], label='Parkinson\'s disease (Train, Upper bound)', marker='v', color='blue')
@@ -114,6 +114,54 @@ if False:
 
     # fig.savefig('mismatch_bounds.png', format='png', dpi=300)
     fig.savefig('mismatch_bounds_a.pdf')
+
+if True:  # Separate figures
+    with plt.style.context(['science', 'grid']):
+        labels_str = ["Upper bnd (Train)", "Lower bnd (Train)", "Alg. 2\' (Test)"]
+
+        fig1, axe = plt.subplots(figsize=(8.4, 8.4))
+        im1 ,= plt.plot(Parkinson30["SNR"], Parkinson30["Upper bound (mismatch probability)"], label='Parkinson\'s disease (Train, Upper bound)', marker='v', color='blue')
+        im2 ,= plt.plot(Parkinson30["SNR"], Parkinson30["Lower bound (mismatch probability)"], label='Parkinson\'s disease (Train, Lower bound)', marker='^', color='blue')
+        im3 ,= plt.plot(Parkinson30["SNR"], Parkinson30["Mismatch probability (Vanilla GD)"], label='Parkinson\'s disease (Test, Optimized)', linestyle='-', marker='', color='blue')
+        axe.legend(labels_str, fontsize=24, loc='upper right', shadow=False, framealpha=0.8)
+        plt.xlabel(r'SNR [dB]', fontsize=22)
+        plt.ylabel(r'Mismatch probability [\%]', fontsize=22)
+        plt.xticks(fontsize=22)
+        plt.yticks(fontsize=22)
+        plt.ylim([0, 50])
+        plt.xlim([-25, 10])
+        plt.show()
+
+        fig2, axe = plt.subplots(figsize=(8.4, 8.4))
+        im4 ,= plt.plot(Heart45["SNR"], Heart45["Upper bound (mismatch probability)"], label='Heart disease (Train, Upper bound)', linestyle='--', marker='v', color='green')
+        im5 ,= plt.plot(Heart45["SNR"], Heart45["Lower bound (mismatch probability)"], label='Heart disease (Train, Lower bound)', linestyle='--', marker='^', color='green')
+        im6 ,= plt.plot(Heart45["SNR"], Heart45["Mismatch probability (Vanilla GD)"], label='Heart disease (Test, Optimized)', linestyle='--', marker='', color='green')
+        axe.legend(labels_str, fontsize=24, loc='upper right', shadow=False, framealpha=0.8)
+        plt.xlabel(r'SNR [dB]', fontsize=22)
+        plt.ylabel(r'Mismatch probability [\%]', fontsize=22)
+        plt.xticks(fontsize=22)
+        plt.yticks(fontsize=22)
+        plt.ylim([0, 50])
+        plt.xlim([-25, 10])
+        plt.show()
+
+        fig3, axe = plt.subplots(figsize=(8.4, 8.4))
+        im7 ,= plt.plot(Cancer60["SNR"], Cancer60["Upper bound (mismatch probability)"], label='Breast cancer (Train, Upper bound)', linestyle=':', marker='v', color='red')
+        im8 ,= plt.plot(Cancer60["SNR"], Cancer60["Lower bound (mismatch probability)"], label='Breast cancer (Train, Lower bound)', linestyle=':', marker='^', color='red')
+        im9 ,= plt.plot(Cancer60["SNR"], Cancer60["Mismatch probability (Vanilla GD)"], label='Breast cancer (Test, Optimized)', linestyle=':', marker='', color='red')
+        axe.legend(labels_str, fontsize=24, loc='upper right', shadow=False, framealpha=0.8)
+        plt.xlabel(r'SNR [dB]', fontsize=22)
+        plt.ylabel(r'Mismatch probability [\%]', fontsize=22)
+        plt.xticks(fontsize=22)
+        plt.yticks(fontsize=22)
+        plt.ylim([0, 50])
+        plt.xlim([-25, 10])
+        plt.show()
+
+    # fig.savefig('mismatch_bounds.png', format='png', dpi=300)
+    fig1.savefig('mismatch_bounds_a_parkinson.pdf')
+    fig2.savefig('mismatch_bounds_a_heart.pdf')
+    fig3.savefig('mismatch_bounds_a_cancer.pdf')
 
 # Figure: SNR gain
 if False:
@@ -183,7 +231,7 @@ if False:
 
 ### - - - Figures for ISIT presentation - - -
 # Figure: Error prob of: Parkinson, T=30; Heart, T=45; Cancer, T=60
-if True:
+if False:
     with plt.style.context(['science', 'grid']):
         fig, axe = plt.subplots(figsize=(8.4,8.4))
         im1 ,= plt.plot(Heart45["SNR"],     Heart45["Error probability (trivial)"],         label="Parkinson, Unweighted",  marker='D', linestyle='-',  color='blue')
@@ -214,7 +262,7 @@ if True:
     fig.savefig('error_prob_a_presentation.pdf')
 
 # Figure: lower and upper bounds on mismatch
-if True:
+if False:
     tick_font_size = 25
     line_width = 2.5
     marker_size = 15
@@ -362,7 +410,7 @@ Cancer_T3_G3 = pd.read_csv(resultsFolderPath + filenameCancer_T3_G3 + ".csv")
 
 # - - - Recreate ISIT paper figures from new simulation - - -
 # Figure: Error probability only alpha, unit gain (Parkinson, T=30; Heart, T=45; Cancer, T=60)
-if False:
+if False:  # All in same figure
     with plt.style.context(['science', 'grid']):
         fig, axe = plt.subplots(figsize=(8.4,8.4))
         im1 ,= plt.plot(Parkinson_T1_G1["SNR"], Parkinson_T1_G1["Error probability (trivial)"], label="Parkinson, T=30, Unweighted", marker='', color='blue')
@@ -391,6 +439,49 @@ if False:
 
     # fig.savefig('error_prob.png', format='png', dpi=300)
     fig.savefig('error_prob_a.pdf')
+
+if True:  # Different figures
+    with plt.style.context(['science', 'grid']):
+        fig1, axe = plt.subplots(figsize=(8.4,8.4))
+        im1 ,= plt.plot(Parkinson_T1_G1["SNR"], Parkinson_T1_G1["Error probability (trivial)"], label="Parkinson, T=30, Unweighted", marker='', color='blue')
+        im4 ,= plt.plot(Parkinson_T1_G1["SNR"], Parkinson_T1_G1["Error probability (alpha, unit beta)"], label="Parkinson, T=30, Alg. 2\'", marker='D', color='blue')
+        axe.legend([im1, im4], [im1._label, im4._label], loc='lower left', framealpha=0.8, fontsize=24)
+        plt.autoscale(tight=True)
+        plt.xlabel(r'SNR [dB]', fontsize=22)
+        plt.ylabel(r'Error probability [\%]', fontsize=22)
+        plt.xticks(fontsize=22)
+        plt.yticks(fontsize=22)
+        plt.ylim([0,50])
+        plt.show()
+
+        fig2, axe = plt.subplots(figsize=(8.4,8.4))
+        im2 ,= plt.plot(Heart_T2_G2["SNR"], Heart_T2_G2["Error probability (trivial)"], label="Heart, T=45, Unweighted", linestyle='--', marker='', color='green')
+        im5 ,= plt.plot(Heart_T2_G2["SNR"], Heart_T2_G2["Error probability (alpha, unit beta)"], label="Heart, T=45, Alg. 2\'", linestyle='--', marker='D', color='green')
+        axe.legend([im2, im5], [im2._label, im5._label], loc='lower left', framealpha=0.8, fontsize=24)
+        plt.autoscale(tight=True)
+        plt.xlabel(r'SNR [dB]', fontsize=22)
+        plt.ylabel(r'Error probability [\%]', fontsize=22)
+        plt.xticks(fontsize=22)
+        plt.yticks(fontsize=22)
+        plt.ylim([0,50])
+        plt.show()
+
+        fig3, axe = plt.subplots(figsize=(8.4,8.4))
+        im3 ,= plt.plot(Cancer_T3_G3["SNR"], Cancer_T3_G3["Error probability (trivial)"], label="Cancer, T=60, Unweighted", linestyle=':', marker='', color='red')
+        im6 ,= plt.plot(Cancer_T3_G3["SNR"], Cancer_T3_G3["Error probability (alpha, unit beta)"], label="Cancer, T=60, Alg. 2\'", linestyle=':', marker='D', color='red')
+        axe.legend([im3, im6], [im3._label, im6._label], loc='upper right', framealpha=0.8, fontsize=24)
+        plt.autoscale(tight=True)
+        plt.xlabel(r'SNR [dB]', fontsize=22)
+        plt.ylabel(r'Error probability [\%]', fontsize=22)
+        plt.xticks(fontsize=22)
+        plt.yticks(fontsize=22)
+        plt.ylim([0,50])
+        plt.show()
+
+    # fig.savefig('error_prob.png', format='png', dpi=300)
+    fig1.savefig('error_prob_a_parkinson.pdf')
+    fig2.savefig('error_prob_a_heart.pdf')
+    fig3.savefig('error_prob_a_cancer.pdf')
 
 # Figure: lower and upper bounds on mismatch probability only alpha
 #       cannot recreate from new simulation...
