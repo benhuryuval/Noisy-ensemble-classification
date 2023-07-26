@@ -2,7 +2,7 @@ import numpy as np
 import sklearn as sk
 import pandas as pd
 from sklearn import preprocessing, model_selection, ensemble
-
+from sklearn.model_selection import KFold
 
 class AdaBoostModel:
     """ Class of real adaboost model - the classifier, train and test set """

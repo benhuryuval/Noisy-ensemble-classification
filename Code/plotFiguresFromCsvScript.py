@@ -6,6 +6,7 @@ from matplotlib.legend import Legend
 
 # Figures for JSAC paper
 cm = 1/2.54  # centimeters in inches
+framealpha = 0.8
 
 ### - - - Figures from ISIT paper - - -
 # Load simulation files
@@ -115,7 +116,7 @@ if False:  # All in one figure
     # fig.savefig('mismatch_bounds.png', format='png', dpi=300)
     fig.savefig('mismatch_bounds_a.pdf')
 
-if True:  # Separate figures
+if False:  # Separate figures
     with plt.style.context(['science', 'grid']):
         labels_str = ["Upper bnd (Train)", "Lower bnd (Train)", "Alg. 2\' (Test)"]
 
@@ -164,7 +165,7 @@ if True:  # Separate figures
     fig3.savefig('mismatch_bounds_a_cancer.pdf')
 
 # Figure: SNR gain
-if False:
+if True:
     def getSnrGain(Data, nPoints):
         x = Data["SNR"].values
         # y_interp = np.linspace(0, 50, num=51)
@@ -218,7 +219,7 @@ if False:
         plt.plot(x32, y32, linestyle='', marker='o', color='red', markersize=6, label='Cancer, T=45')
         plt.plot(x33, y33, linestyle='', marker='o', color='red', markersize=9, label='Cancer, T=60')
 
-        plt.legend(fontsize=15, ncol=3, loc='upper center', framealpha=0.8)
+        plt.legend(fontsize=15, ncol=3, loc='upper center', framealpha=None)
         plt.xlabel(r'Error probability [\%]', fontsize=20)
         plt.ylabel(r'SNR gap [dB]', fontsize=20)
         plt.xticks(fontsize=20)
@@ -386,7 +387,6 @@ Parkinson_T1_G3 = pd.read_csv(resultsFolderPath + filenameParkinson_T1_G3 + ".cs
 # Parkinson_T3_G1 = pd.read_csv(resultsFolderPath + filenameParkinson_T3_G1 + ".csv")
 # Parkinson_T3_G2 = pd.read_csv(resultsFolderPath + filenameParkinson_T3_G2 + ".csv")
 # Parkinson_T3_G3 = pd.read_csv(resultsFolderPath + filenameParkinson_T3_G3 + ".csv")
-
 # Heart
 # Heart_T1_G1 = pd.read_csv(resultsFolderPath + filenameHeart_T1_G1 + ".csv")
 # Heart_T1_G2 = pd.read_csv(resultsFolderPath + filenameHeart_T1_G2 + ".csv")
@@ -422,10 +422,10 @@ if False:  # All in same figure
 
         # specify the lines and labels of the first legend
         axe.legend([im1, im2, im3], [im1._label, im2._label, im3._label],
-                  loc='lower left', framealpha=0.8, fontsize=20)
+                  loc='lower left', framealpha=framealpha, fontsize=20)
         # Create the second legend and add the artist manually.
         leg = Legend(axe, [im4, im5, im6], [im4._label, im5._label, im6._label],
-                     loc='upper right', framealpha=0.8, fontsize=20)
+                     loc='upper right', framealpha=framealpha, fontsize=20)
         axe.add_artist(leg)
 
         # plt.legend(fontsize=16, ncol=1, loc='upper right', framealpha=0.8)
@@ -440,12 +440,12 @@ if False:  # All in same figure
     # fig.savefig('error_prob.png', format='png', dpi=300)
     fig.savefig('error_prob_a.pdf')
 
-if True:  # Different figures
+if False:  # Different figures
     with plt.style.context(['science', 'grid']):
         fig1, axe = plt.subplots(figsize=(8.4,8.4))
         im1 ,= plt.plot(Parkinson_T1_G1["SNR"], Parkinson_T1_G1["Error probability (trivial)"], label="Parkinson, T=30, Unweighted", marker='', color='blue')
         im4 ,= plt.plot(Parkinson_T1_G1["SNR"], Parkinson_T1_G1["Error probability (alpha, unit beta)"], label="Parkinson, T=30, Alg. 2\'", marker='D', color='blue')
-        axe.legend([im1, im4], [im1._label, im4._label], loc='lower left', framealpha=0.8, fontsize=24)
+        axe.legend([im1, im4], [im1._label, im4._label], loc='lower left', framealpha=framealpha, fontsize=24)
         plt.autoscale(tight=True)
         plt.xlabel(r'SNR [dB]', fontsize=22)
         plt.ylabel(r'Error probability [\%]', fontsize=22)
@@ -457,7 +457,7 @@ if True:  # Different figures
         fig2, axe = plt.subplots(figsize=(8.4,8.4))
         im2 ,= plt.plot(Heart_T2_G2["SNR"], Heart_T2_G2["Error probability (trivial)"], label="Heart, T=45, Unweighted", linestyle='--', marker='', color='green')
         im5 ,= plt.plot(Heart_T2_G2["SNR"], Heart_T2_G2["Error probability (alpha, unit beta)"], label="Heart, T=45, Alg. 2\'", linestyle='--', marker='D', color='green')
-        axe.legend([im2, im5], [im2._label, im5._label], loc='lower left', framealpha=0.8, fontsize=24)
+        axe.legend([im2, im5], [im2._label, im5._label], loc='lower left', framealpha=framealpha, fontsize=24)
         plt.autoscale(tight=True)
         plt.xlabel(r'SNR [dB]', fontsize=22)
         plt.ylabel(r'Error probability [\%]', fontsize=22)
@@ -469,7 +469,7 @@ if True:  # Different figures
         fig3, axe = plt.subplots(figsize=(8.4,8.4))
         im3 ,= plt.plot(Cancer_T3_G3["SNR"], Cancer_T3_G3["Error probability (trivial)"], label="Cancer, T=60, Unweighted", linestyle=':', marker='', color='red')
         im6 ,= plt.plot(Cancer_T3_G3["SNR"], Cancer_T3_G3["Error probability (alpha, unit beta)"], label="Cancer, T=60, Alg. 2\'", linestyle=':', marker='D', color='red')
-        axe.legend([im3, im6], [im3._label, im6._label], loc='upper right', framealpha=0.8, fontsize=24)
+        axe.legend([im3, im6], [im3._label, im6._label], loc='upper right', framealpha=framealpha, fontsize=24)
         plt.autoscale(tight=True)
         plt.xlabel(r'SNR [dB]', fontsize=22)
         plt.ylabel(r'Error probability [\%]', fontsize=22)
@@ -542,7 +542,7 @@ if False:
         plt.plot(x32, y32, linestyle='', marker='o', color='red', markersize=6, label='Cancer, T=45')
         plt.plot(x33, y33, linestyle='', marker='o', color='red', markersize=9, label='Cancer, T=60')
 
-        plt.legend(fontsize=10, ncol=3, loc='upper center', framealpha=0.8)
+        plt.legend(fontsize=10, ncol=3, loc='upper center', framealpha=None)
         plt.xlabel(r'Error probability [\%]', fontsize=15)
         plt.ylabel(r'SNR gap [dB]', fontsize=15)
         plt.xticks(fontsize=15)
@@ -567,7 +567,7 @@ if False:
         im3 ,= plt.plot(Parkinson_T1_G3["SNR"], Parkinson_T1_G3["Error probability (joint: alpha, beta)"], label="Parkinson, $G="+G3_str+"$, Alg. 2", linestyle='-', marker='o', color='blue', markersize=9)
         im4 ,= plt.plot(Parkinson_T1_G3["SNR"], Parkinson_T1_G3["Error probability (alpha, unit beta)"], label="Parkinson, Alg. 2\'", linestyle='-', marker='x', color='blue', markersize=9)
         # im4 ,= plt.plot(Parkinson30["SNR"], Parkinson30["Error probability (Vanilla GD)"], label="Parkinson, , Alg. 2\'", linestyle='-', marker='x', color='blue', markersize=9)
-        axe.legend(fontsize=20, loc='lower left', ncol=1, shadow=False, framealpha=0.8)
+        axe.legend(fontsize=20, loc='lower left', ncol=1, shadow=False, framealpha=framealpha)
         plt.xlabel(r'SNR [dB]', fontsize=20)
         plt.ylabel(r'Error probability [\%]', fontsize=20)
         plt.xticks(fontsize=20)
@@ -584,7 +584,7 @@ if False:
         im3 ,= plt.plot(Heart_T2_G3["SNR"], Heart_T2_G3["Error probability (joint: alpha, beta)"], label="Heart, $G="+G3_str+"$, Alg. 2", linestyle='-', marker='o', color='green', markersize=9)
         im4 ,= plt.plot(Heart_T2_G3["SNR"], Heart_T2_G3["Error probability (alpha, unit beta)"], label="Heart, Alg. 2\'", linestyle='-', marker='x', color='green', markersize=9)
         # im4 ,= plt.plot(Heart45["SNR"], Heart45["Error probability (Optimized GD)"], label="Heart, Alg. 2\'", linestyle='-', marker='x', color='green', markersize=9)
-        axe.legend(fontsize=20, loc='lower left', ncol=1, shadow=False, framealpha=0.8)
+        axe.legend(fontsize=20, loc='lower left', ncol=1, shadow=False, framealpha=framealpha)
         plt.xlabel(r'SNR [dB]', fontsize=20)
         plt.ylabel(r'Error probability [\%]', fontsize=20)
         plt.xticks(fontsize=20)
@@ -601,7 +601,7 @@ if False:
         im3 ,= plt.plot(Cancer_T3_G3["SNR"], Cancer_T3_G3["Error probability (joint: alpha, beta)"], label="Cancer, $G="+G3_str+"$, Alg. 2", linestyle='--', marker='o', color='red', markersize=9)
         im4 ,= plt.plot(Cancer_T3_G3["SNR"], Cancer_T3_G3["Error probability (alpha, unit beta)"], label="Cancer, Alg. 2\'", linestyle='-', marker='x', color='red', markersize=9)
         # im4 ,= plt.plot(Cancer60["SNR"], Cancer60["Error probability (Vanilla GD)"], label="Cancer, Alg. 2\'", linestyle='-', marker='x', color='red', markersize=9)
-        axe.legend(fontsize=20, loc='upper right', ncol=1, shadow=False, framealpha=0.8)
+        axe.legend(fontsize=20, loc='upper right', ncol=1, shadow=False, framealpha=framealpha)
         plt.xlabel(r'SNR [dB]', fontsize=20)
         plt.ylabel(r'Error probability [\%]', fontsize=20)
         plt.xticks(fontsize=20)
@@ -613,7 +613,7 @@ if False:
         fig.savefig('error_prob_a_g_cancer.pdf', format='pdf')
 
 # Figure: SNR gain of alpha, gain
-if False:
+if True:
     def getSnrGain(Data, nPoints):
         x = Data["SNR"].values
         # y_interp = np.linspace(0, 50, num=51)
@@ -682,8 +682,7 @@ if False:
             [label_row_1, label_j_1, label_empty * 3, label_j_2, label_empty * 3, label_j_3, label_empty * 3])
         # Create legend
         axe.legend(legend_handle, legend_labels, fontsize=15,
-                  loc='lower center', ncol=4, shadow=False, handletextpad=-2, framealpha=0.8)
-
+                  loc='lower center', ncol=4, shadow=False, handletextpad=-2, framealpha=None)
 
         plt.xlabel(r'Error probability [\%]', fontsize=20)
         plt.ylabel(r'SNR gap [dB]', fontsize=20)

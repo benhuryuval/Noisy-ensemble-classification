@@ -1,6 +1,8 @@
 import numpy as np
 import scipy
 import csv
+import sklearn as sk
+import pandas as pd
 
 
 def QFunc(x):
@@ -54,3 +56,21 @@ def scale_to_constraint(beta, G, pNorm):
     elif pNorm == 3:  # infinity norm
         K = np.max(beta)/G
     return beta / K
+
+def load_dataset(database_name, database_path):
+    if database_name == 'Wisconsin Breast Cancer Database':
+        from sklearn.datasets import load_breast_cancer
+        dataset = sk.datasets.load_breast_cancer()
+        features = pd.DataFrame(dataset.data, columns=dataset.feature_names).to_numpy()
+        labels = pd.Categorical.from_codes(dataset.target, dataset.target_names)
+    elif database_name == 'Heart Diseases Database':
+        dataset = np.genfromtxt(database_path, delimiter=',')
+        features = dataset[:, 0:13]
+        labels = dataset[:, 13] > 0
+    elif database_name == 'Parkinson Database':
+        dataset = np.genfromtxt(database_path, delimiter=',')
+        features = dataset[1:, 1:23]
+        labels = dataset[1:, 23]
+    else:
+        raise NameError('NoSuchDatabase')
+    return features, labels
